@@ -57,7 +57,7 @@
 
 3. **Clone the repository:**
    ```bash
-   git clone <YOUR_REPO_URL>
+   git clone https://github.com/akramlatif/GhostTracker.git
    cd GhostTrackPro
    ```
 
@@ -87,7 +87,7 @@
 
 3. **Clone the repository:**
    ```bash
-   git clone <YOUR_REPO_URL>
+   git clone https://github.com/akramlatif/GhostTracker.git
    cd GhostTrackPro
    ```
 
@@ -168,8 +168,7 @@ GhostTrackPro/
 ## 📜 License
 
 This project is licensed for educational use only. By using this tool, you agree to comply with all local and international laws regarding privacy and data protection.
-
-**Developed by:** HunxByts (Original Concept) & Enhanced for Educational Clarity.  
+ 
 **Version:** 2.0 (Pro)
 ```
 
