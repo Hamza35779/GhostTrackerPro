@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/index.py": {
+    "app.py": {
       "excludeFiles": "{images/**,logs/**,**.md,.**,__pycache__/**}"
     }
   }
