@@ -12,7 +12,7 @@ from core import (
 
 WEB_DIR = os.path.dirname(os.path.abspath(__file__))
 
-app = Flask(__name__, template_folder=os.path.join(WEB_DIR, 'templates'))
+app = Flask(__name__, template_folder=os.path.join(WEB_DIR, 'templates'), static_folder=None)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24).hex())
 
 
