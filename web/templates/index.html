@@ -4,11 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GhostTrackerPro - Web Interface</title>
+  <link rel="icon" href="/static/logo.jpg" type="image/jpeg">
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <nav>
-    <div class="brand">GhostTrack <span>Pro</span></div>
+    <div class="brand">
+      <img src="/static/logo.jpg" alt="Logo" class="nav-logo">
+      GhostTrack <span>Pro</span>
+    </div>
     <div class="nav-links">
       <a href="#" class="active" data-page="home">Home</a>
       <a href="#" data-page="ip-tracker">IP Tracker</a>
@@ -23,6 +27,9 @@
   <div class="container">
     <!-- HOME -->
     <div id="page-home" class="section active">
+      <div class="banner-container">
+        <img src="/static/banner.jpg" alt="GhostTrackerPro Banner" class="home-banner">
+      </div>
       <h1>GhostTrackerPro <small>OSINT & Educational Toolkit</small></h1>
       <p class="sub">Select a tool below to get started. All results are automatically saved to the logs directory.</p>
       <div class="cards">

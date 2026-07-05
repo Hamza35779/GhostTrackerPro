@@ -13,25 +13,11 @@
 </p>
 
 <p align="center">
-  <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" style="stop-color:#00ff88"/>
-        <stop offset="100%" style="stop-color:#00cc66"/>
-      </linearGradient>
-    </defs>
-    <circle cx="32" cy="32" r="30" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.3"/>
-    <circle cx="32" cy="32" r="20" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.5"/>
-    <circle cx="32" cy="32" r="10" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.7"/>
-    <circle cx="32" cy="32" r="4" fill="#00ff88"/>
-    <line x1="32" y1="32" x2="50" y2="18" stroke="#00ff88" stroke-width="2" opacity="0.8"/>
-    <line x1="32" y1="32" x2="48" y2="42" stroke="#00ff88" stroke-width="2" opacity="0.6"/>
-    <line x1="32" y1="32" x2="20" y2="46" stroke="#00ff88" stroke-width="2" opacity="0.4"/>
-  </svg>
+  <img src="images/Logo.jpg" alt="GhostTrack Pro Logo" width="120" style="border-radius: 16px;">
 </p>
 
 <p align="center">
-  <img src="images/Home.png" alt="GhostTrack Pro" width="80%">
+  <img src="images/Banner.jpg" alt="GhostTrack Pro Banner" width="100%">
 </p>
 
 <h1 align="center">
