@@ -1,59 +1,170 @@
-# GhostTrack Pro
+<p align="center">
+  <img src="images/Home.png" alt="GhostTrack Pro" width="80%">
+</p>
 
-![Home](images/Home.jpeg)
+<h1 align="center">GhostTrack Pro</h1>
+<p align="center">
+  <strong>Advanced OSINT & Educational Tracking Toolkit</strong>
+  <br>
+  <sub>IP Tracking · Phone Intelligence · Username OSINT · Live GPS Capture · Web Interface</sub>
+</p>
 
-**GhostTrack Pro** is an advanced OSINT (Open Source Intelligence) and educational tracking tool designed for cybersecurity professionals, researchers, and ethical hackers. It combines traditional information gathering with a real-time GPS phishing module to demonstrate how location data can be captured via social engineering.
+<p align="center">
+  <a href="#features">Features</a> •
+  <a href="#installation">Installation</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#web-interface">Web UI</a> •
+  <a href="#deploy-to-vercel">Vercel</a> •
+  <a href="#api-documentation">API</a> •
+  <a href="#architecture">Architecture</a>
+</p>
 
-> **DISCLAIMER:** This tool is for **educational purposes and authorized testing only**.
-> - Do not use this to track individuals without their explicit consent.
-> - Unauthorized tracking may violate privacy laws and computer misuse acts in your jurisdiction.
-> - The developer is not responsible for misuse of this tool.
+---
 
-## Capabilities
+**GhostTrack Pro** is a multi-module OSINT (Open Source Intelligence) and educational tracking tool designed for cybersecurity professionals, penetration testers, and ethical hackers. It combines traditional information gathering — IP geolocation, phone number carrier lookup, username cross-referencing — with a **real-time GPS capture module** that demonstrates how location data can be obtained via social engineering.
 
-### 1. IP Information Gathering
-- Retrieves public registration data for any IP address.
-- **Data Provided:** Country, City, ISP, Organization, Region, Coordinates.
-- **Limitation:** Provides registration info, **not** real-time GPS location.
+All features are available through three interfaces:
+- **Terminal CLI** — interactive menu or direct command-line flags
+- **Local Web UI** — dark-themed browser interface (Flask, port 8080)
+- **Cloud Web UI** — deploy to Vercel for global access
+
+---
+
+## Disclaimer
+
+> **This tool is for educational purposes and authorized testing only.**
+> - Do **not** use this to track individuals without their explicit consent.
+> - Unauthorized tracking may violate privacy laws (GDPR, CFAA, etc.) in your jurisdiction.
+> - The developer is **not responsible** for any misuse of this tool.
+> - The GPS capture feature works via a phishing-style link — use it **only** on your own devices or with written permission.
+
+---
+
+## Features
+
+### 1. IP Address Intelligence
+Retrieve public registration data for any IPv4 address via the [ipwho.is](https://ipwho.is) API.
+
+| Field | Description |
+|---|---|
+| IP Address | The queried address |
+| Type | IPv4 / IPv6 |
+| Country | Registered country |
+| City | Registered city |
+| Region | State or region |
+| ISP | Internet Service Provider |
+| Organization | Owning organization |
+| Coordinates | Approximate latitude/longitude |
+
+**Limitation:** IP geolocation shows the ISP's registered location, not the user's physical address. It cannot identify a specific person or house.
+
+---
 
 ### 2. Phone Number Intelligence
-- Analyzes phone numbers for validity and carrier information.
-- **Data Provided:** Carrier name, registered region/country, timezone, validity status.
-- **Limitation:** Cannot track real-time GPS location of a phone number without a warrant or spyware.
+Analyze phone numbers for carrier, region, and validity using the [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) library (Google's libphonenumber).
+
+| Field | Description |
+|---|---|
+| Country Code | International dialing code |
+| National Number | Formatted local number |
+| Registered Location | Geographic region of the carrier |
+| Carrier / Operator | Mobile network operator |
+| Timezone | Timezone(s) associated with the number |
+| Valid Number | Whether the number format is valid |
+
+**Limitation:** This provides carrier registration data only — not real-time GPS location. Real-time tracking requires the GPS capture module or legal interception.
+
+---
 
 ### 3. Username OSINT
-- Checks the existence of a username across major social media platforms (Facebook, Instagram, Twitter/X, GitHub, Reddit, TikTok, Pinterest).
-- Helps identify a target's digital footprint.
+Check the existence of a username across major social media platforms.
 
-### 4. Live GPS Tracker
-![GPS Tracker](images/GPSTracker.jpeg)
-- **How it works:** Creates a local web server that generates a "trap" link (e.g., a fake security alert page).
-- **The Attack:** When the target clicks the link and grants location permission, their **exact real-time GPS coordinates** and IP address are sent to your terminal.
-- **Use Case:** Demonstrates the dangers of granting location permissions to unknown links.
-- **Requirement:** For remote targets (outside your WiFi), this feature requires a tunneling service like **Ngrok** or **Localxpose** to expose your local server to the internet.
+| Platform | URL Pattern |
+|---|---|
+| Instagram | `https://instagram.com/{username}/` |
+| Facebook | `https://facebook.com/{username}` |
+| Twitter / X | `https://twitter.com/{username}` |
+| GitHub | `https://github.com/{username}` |
+| Reddit | `https://reddit.com/user/{username}` |
+| TikTok | `https://tiktok.com/@{username}` |
+| Pinterest | `https://pinterest.com/{username}/` |
+
+Results are categorized as **Found**, **Not Found**, or **Blocked** (rate-limited / captcha). Some platforms may return false positives due to anti-bot measures.
+
+---
+
+### 4. Live GPS Tracker (Educational)
+
+<p align="center">
+  <img src="images/GPSTracker.jpeg" alt="GPS Tracker" width="60%">
+</p>
+
+Creates a local Flask web server that hosts a fake "Security Alert" page. When the target visits the link and clicks **"Verify & Secure Device"**, the browser's Geolocation API sends their coordinates to your terminal.
+
+**Technical flow:**
+1. Start the server on port 5000
+2. Victim visits `http://your-ip:5000`
+3. Page requests location permission
+4. On acceptance, coordinates are sent to `/capture` endpoint
+5. Data is printed to terminal and saved to `logs/`
+
+**Requirements:** For remote targets, use a tunneling service (Ngrok, LocalXpose, Cloudflare Tunnel) to expose port 5000.
+
+---
 
 ### 5. Web Interface (Browser UI)
-- A modern, responsive web UI for all tracking features.
-- Accessible from any browser on your local network.
-- Can be deployed to Vercel for global access.
-- Results displayed in a clean card layout with auto-save to logs.
 
-## Requirements
-- **Python 3.8+** (Required)
-- **Operating System:** Linux (Kali, Ubuntu, etc.), macOS, or Android (Termux).
-- **Dependencies:**
-  - `requests` (For API calls)
-  - `phonenumbers` (For phone analysis)
-  - `flask` (For the web server and GPS tracker)
+A single-page web application with a dark theme, card-based navigation, and real-time API responses:
 
-## Installation & Setup
+- IP Tracker — input form with results table
+- Phone Tracker — carrier and location display
+- Username Tracker — per-platform status badges
+- My IP — one-click public IP lookup
+- GPS Tracker — setup instructions
+- Logs Browser — view all saved results
 
-### Linux (Kali / Parrot OS / Ubuntu)
+---
+
+### 6. Auto-Save & Logging
+
+Every result is automatically saved to `logs/` as a timestamped text file:
+
+```
+logs/
+├── IP_TRACK_2026-07-05_14-30-22.txt
+├── PHONE_TRACK_2026-07-05_14-31-05.txt
+├── USERNAME_TRACK_2026-07-05_14-32-10.txt
+└── GPS_CAPTURE_2026-07-05_14-33-00.txt
+```
+
+In CLI flag mode and web mode, saving is automatic. In interactive menu mode, you are prompted before saving.
+
+---
+
+## Installation
+
+### Requirements
+
+- **Python 3.8+**
+- **pip** (Python package manager)
+- **Operating System:** Linux (Kali, Ubuntu, Parrot), macOS, or Android (Termux)
+
+### Linux (Kali / Ubuntu / Parrot)
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install python3-pip git -y
-git clone https://github.com/akramlatif/GhostTrackerPro.git
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
+cd GhostTrackerPro
+pip3 install -r requirements.txt
+python3 GhostTrackerPro.py
+```
+
+### macOS
+
+```bash
+# Install Python if needed: brew install python
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
 cd GhostTrackerPro
 pip3 install -r requirements.txt
 python3 GhostTrackerPro.py
@@ -61,198 +172,326 @@ python3 GhostTrackerPro.py
 
 ### Termux (Android)
 
-> **Note:** Do not use the Play Store version of Termux. Download it from F-Droid or the official GitHub repository.
+> **Important:** Do not use the Play Store version of Termux — it is outdated. Download from [F-Droid](https://f-droid.org/en/packages/com.termux/) or the [official GitHub](https://github.com/termux/termux-app).
 
 ```bash
 pkg update && pkg upgrade
 pkg install python git
-git clone https://github.com/akramlatif/GhostTrackerPro.git
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
 cd GhostTrackerPro
 pip install -r requirements.txt
 python GhostTrackerPro.py
 ```
 
-### macOS
+### Verify Installation
 
 ```bash
-# Install Python if you don't have it: brew install python
-git clone https://github.com/akramlatif/GhostTrackerPro.git
-cd GhostTrackerPro
-pip3 install -r requirements.txt
-python3 GhostTrackerPro.py
+python3 GhostTrackerPro.py --myip
+# Expected output: Your public IP address with ISP and location
 ```
+
+---
 
 ## Usage
 
-### Interactive Menu Mode
+### Interactive Menu
 
 ```bash
 python3 GhostTrackerPro.py
 ```
 
-Select an option by entering its number:
-- `1` - IP Tracker
-- `2` - Show Your IP
-- `3` - Phone Number Tracker
-- `4` - Username Tracker
-- `5` - Live GPS Tracker
-- `6` - Web Interface (Browser UI)
-- `0` - Exit
+```
+[ 1 ] IP Tracker (Info Only)
+[ 2 ] Show Your IP
+[ 3 ] Phone Number Tracker (Info Only)
+[ 4 ] Username Tracker
+[ 5 ] Live GPS Tracker
+[ 6 ] Web Interface (Browser UI)
+[ 0 ] Exit
+```
 
-### Command-Line Mode
+### Command-Line Flags
 
 ```bash
+# IP lookup (auto-saves result)
 python3 GhostTrackerPro.py --ip 8.8.8.8
+
+# Phone lookup
 python3 GhostTrackerPro.py --phone +14155552671
+
+# Username search
 python3 GhostTrackerPro.py --username johndoe
+
+# Your public IP
 python3 GhostTrackerPro.py --myip
+
+# GPS capture server
 python3 GhostTrackerPro.py --gps
+
+# Web interface
 python3 GhostTrackerPro.py --web
+
+# Help
 python3 GhostTrackerPro.py --help
 ```
 
-### Web Interface
+---
 
-The web interface provides a modern browser-based UI for all tracking features. Start it in two ways:
+## Web Interface
 
-**From the CLI menu:** Select option `6` (Web Interface)
+Start the local web UI and open `http://localhost:8080` in your browser.
 
-**From the command line:**
 ```bash
+# From CLI menu
+python3 GhostTrackerPro.py   # then select option 6
+
+# From command line
 python3 GhostTrackerPro.py --web
-```
 
-**Directly:**
-```bash
+# Directly
 python3 web/server.py
 ```
 
-Then open your browser to:
-- **Local:** http://localhost:8080
-- **Network:** http://YOUR_IP:8080 (accessible from other devices on your network)
+The web interface auto-detects your local network IP and displays it for sharing with other devices on your LAN.
 
-The web interface includes:
-- Dashboard with clickable cards for each tool
-- Form inputs with Enter-key support
-- Real-time results displayed in styled cards
-- Auto-save of all results to the logs directory
-- Logs browser to view past results
-- Dark theme optimized for long use
-
-### Auto-Save Results
-
-Results are automatically saved to the `logs/` directory. In CLI mode you'll be prompted to save; in CLI flag mode and web mode, saving is automatic.
-
-```
-logs/
-├── IP_TRACK_2026-07-05_14-30-22.txt
-├── PHONE_TRACK_2026-07-05_14-31-05.txt
-└── USERNAME_TRACK_2026-07-05_14-32-10.txt
-```
-
-### How to Use the Live GPS Tracker
-
-The Live GPS Tracker works in two scenarios:
-
-#### Scenario 1: Local Network (Same WiFi)
-- Run the GPS tracker (option 5 or `--gps`).
-- Send the `http://192.168.x.x:5000` link to the target on the same network.
-- If they click and allow location, you will see their coordinates.
-
-#### Scenario 2: Remote Network (Internet)
-Use a tunneling service like Ngrok to expose your local server:
-
-```bash
-ngrok http 5000
-```
-
-Use the generated `https://...` link instead of the local IP.
-
-## FAQ & Limitations
-
-**Q:** Can I track a phone's real-time location just by entering the number?
-**A:** No. This tool provides carrier/registration info only. Real-time GPS requires the Live GPS Tracker feature, which needs the target to click a link and grant permission.
-
-**Q:** Can I track someone's IP to their exact house?
-**A:** No. IP addresses only reveal the ISP's server location (City/Region).
-
-**Q:** Why do I need Flask?
-**A:** Flask powers both the web interface and the Live GPS Tracker server.
-
-**Q:** Is this legal?
-**A:** Yes, for educational purposes and authorized testing. Using it without consent may be illegal.
+---
 
 ## Deploy to Vercel
 
-You can deploy the web interface to Vercel for free, making it accessible from anywhere.
+The web interface is live at:
 
-### Prerequisites
+<p align="center">
+  <a href="https://ghosttrackerpro.vercel.app"><strong>https://ghosttrackerpro.vercel.app</strong></a>
+</p>
 
-- A [Vercel](https://vercel.com) account (free tier works)
-- [Vercel CLI](https://vercel.com/docs/cli) installed: `npm i -g vercel`
+### Deploy Your Own Instance
 
-### One-Click Deploy
+The project uses **zero-configuration Flask detection** — Vercel automatically detects `requirements.txt` and `app.py`.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/akramlatif/GhostTrackerPro)
+**Option 1 — One-click:**
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Hamza35779/GhostTrackerPro)
 
-### Manual Deploy
-
+**Option 2 — CLI:**
 ```bash
-# Clone the repo
-git clone https://github.com/akramlatif/GhostTrackerPro.git
+npm i -g vercel
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
 cd GhostTrackerPro
-
-# Deploy to Vercel
-vercel
+vercel --prod
 ```
 
-Follow the CLI prompts. The app will be available at `https://your-project.vercel.app`.
+**Notes:**
+- Logs use `/tmp/logs` (ephemeral — cleared between requests)
+- GPS tracker (`--gps`) runs locally only — not on Vercel
+- Python version: 3.12 (set via `.python-version`)
 
-### Vercel Notes
+---
 
-- The `api/index.py` file is the Vercel entry point — it imports the Flask app from `web/server.py`.
-- On Vercel, the logs directory uses `/tmp/logs` (ephemeral). Logs persist only during the request.
-- The GPS tracker feature (`--gps`) cannot run on Vercel — it requires a local machine to bind to port 5000.
-- The CLI mode (`--ip`, `--phone`, etc.) runs in your terminal and is unaffected by Vercel deployment.
+## API Documentation
+
+The Flask backend exposes a REST API at `/api/*`. All endpoints return JSON.
+
+### `GET /api/my-ip`
+
+Returns your public IP and optional ISP/location data.
+
+```bash
+curl https://ghosttrackerpro.vercel.app/api/my-ip
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "ip": "20.192.21.48",
+    "isp": "Microsoft Corporation",
+    "country": "India",
+    "city": "Pune"
+  }
+}
+```
+
+### `POST /api/ip-track`
+
+Look up an IP address.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/ip-track \
+  -H "Content-Type: application/json" \
+  -d '{"ip": "8.8.8.8"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "ip": "8.8.8.8",
+    "type": "IPv4",
+    "country": "United States",
+    "city": "Mountain View",
+    "region": "California",
+    "isp": "Google LLC",
+    "organization": "Google LLC",
+    "latitude": 37.3860517,
+    "longitude": -122.0838511,
+    "_saved": { "success": true, "path": "/tmp/logs/IP_TRACK_..." }
+  }
+}
+```
+
+### `POST /api/phone-track`
+
+Analyze a phone number.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/phone-track \
+  -H "Content-Type: application/json" \
+  -d '{"phone": "+14155552671"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "phone": "+14155552671",
+    "country_code": "+1",
+    "national_number": "(415) 555-2671",
+    "location": "San Francisco, CA",
+    "carrier": "N/A",
+    "timezone": "America/Los_Angeles",
+    "is_valid": true,
+    "_saved": { "success": true, "path": "/tmp/logs/PHONE_TRACK_..." }
+  }
+}
+```
+
+### `POST /api/username-track`
+
+Search a username across social media.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/username-track \
+  -H "Content-Type: application/json" \
+  -d '{"username": "github"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "username": "github",
+    "results": [
+      { "platform": "Instagram", "url": "https://www.instagram.com/github/", "status": "found" },
+      { "platform": "GitHub", "url": "https://github.com/github", "status": "found" },
+      { "platform": "Facebook", "url": "https://www.facebook.com/github", "status": "blocked", "code": 400 }
+    ],
+    "_saved": { "success": true, "path": "/tmp/logs/USERNAME_TRACK_..." }
+  }
+}
+```
+
+### `GET /api/logs`
+
+Retrieve up to 50 most recent saved log entries.
+
+```bash
+curl https://ghosttrackerpro.vercel.app/api/logs
+```
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   GhostTrack Pro                     │
+├─────────────────────────────────────────────────────┤
+│                                                      │
+│  ┌──────────┐    ┌───────────┐    ┌──────────────┐  │
+│  │ CLI      │    │ Flask Web │    │ Vercel (Cloud)│  │
+│  │ Termux / │───▶│ Server    │───▶│ Serverless    │  │
+│  │ Linux    │    │ Port 8080 │    │ Function      │  │
+│  └──────────┘    └───────────┘    └──────────────┘  │
+│        │               │               │             │
+│        ▼               ▼               ▼             │
+│  ┌─────────────────────────────────────────────────┐│
+│  │              core.py (Shared Logic)              ││
+│  │  track_ip · track_phone · track_username         ││
+│  │  get_my_ip · get_local_ip · save_result · read   ││
+│  └─────────────────────────────────────────────────┘│
+│        │                                             │
+│        ▼                                             │
+│  ┌─────────────────────────────────────────────────┐│
+│  │  External APIs & Libraries                       ││
+│  │  ipwho.is · ipify.org · phonenumbers · requests ││
+│  └─────────────────────────────────────────────────┘│
+│                                                      │
+└─────────────────────────────────────────────────────┘
+```
+
+All three interfaces (CLI, local web, Vercel web) import the same functions from `core.py`. Results are identical regardless of the interface used.
+
+---
 
 ## File Structure
 
 ```
 GhostTrackPro/
-├── api/
-│   └── index.py            # Vercel serverless entry point
-├── GhostTrackerPro.py      # CLI main script
-├── core.py                 # Shared logic (used by CLI + web)
-├── requirements.txt        # Dependencies
-├── vercel.json             # Vercel deployment config
-├── .vercelignore           # Files to exclude from deploy
-├── README.md               # This file
-├── .gitignore              # Git ignore rules
-├── images/                 # Screenshots
-│   ├── Home.jpeg
-│   └── GPSTracker.jpeg
-├── logs/                   # (Auto-created) Stores captured data
-└── web/                    # Web interface
-    ├── __init__.py
-    ├── server.py           # Flask app with API + frontend
-    ├── static/
-    │   └── style.css       # Dark-themed responsive styles
-    └── templates/
-        └── index.html      # Single-page web interface
+│
+├── app.py                   # Flask app (Vercel auto-detects this)
+├── core.py                  # Shared logic layer (data functions)
+├── GhostTrackerPro.py       # CLI entry point with argparse
+├── requirements.txt         # Python dependencies
+├── vercel.json              # Vercel deployment config
+├── .python-version          # Python version pin (3.12)
+├── .gitignore
+├── .vercelignore
+├── README.md
+│
+├── images/
+│   ├── Home.png             # Screenshot of the main interface
+│   └── GPSTracker.jpeg      # Screenshot of the GPS tracker
+│
+├── logs/                    # Auto-created; stores all results
+│
+├── web/
+│   ├── __init__.py
+│   ├── server.py            # Imports app from app.py (local dev)
+│   ├── static/
+│   │   └── style.css        # Dark-theme responsive CSS
+│   └── templates/
+│       └── index.html       # Single-page application
+│
+└── .vercel/                 # Created by `vercel` CLI (gitignored)
+    ├── project.json
+    └── README.txt
 ```
 
-## Architecture
+---
 
-The project uses a clean layered architecture:
+## FAQ
 
-- **`core.py`** - Pure logic functions that return data dictionaries. No I/O, no terminal interaction.
-- **`GhostTrackerPro.py`** - CLI interface that imports `core.py` and handles terminal I/O (input/print).
-- **`web/server.py`** - Flask web server that imports `core.py` and exposes REST API endpoints, serving the frontend.
+**Q: Can I track a phone's real-time location just by entering the number?**  
+**A:** No. Real-time GPS requires the Live GPS Tracker feature, which needs the target to click a link and grant browser location permission. Phone number lookup only provides carrier registration data.
 
-This means both the CLI and web interface share the exact same tracking logic, ensuring consistent results.
+**Q: Can I find someone's exact address from their IP?**  
+**A:** No. IP geolocation returns the ISP's registered city/region — not a street address or specific person.
+
+**Q: Why does the GPS tracker need Flask?**  
+**A:** The GPS tracker runs a local Flask web server on port 5000 to serve the phishing page and receive the Geolocation API callback.
+
+**Q: Is this legal?**  
+**A:** The tool is legal for educational purposes and authorized testing (your own devices or with written consent). Using it to track someone without permission may violate local privacy laws.
+
+**Q: Can I use this on Termux?**  
+**A:** Yes. Install Python, clone the repo, run `pip install -r requirements.txt`, then `python GhostTrackerPro.py`.
+
+**Q: Why does the Vercel deploy show no logs?**  
+**A:** Vercel's filesystem is read-only except for `/tmp`. Logs are written to `/tmp/logs` but are ephemeral — they don't persist between requests.
+
+---
 
 ## License
 
-This project is licensed for educational use only. By using this tool, you agree to comply with all local and international laws regarding privacy and data protection.
+This project is licensed for **educational use only**. By using this tool, you agree to comply with all applicable local and international laws regarding privacy, data protection, and computer misuse.
 
-**Version:** 3.0 (Web Edition)
+**Version:** 3.1 · Web Edition
