@@ -222,28 +222,59 @@ def IP_Track():
 
 @is_option
 def phoneGW():
-    User_phone = input(f"\n {Wh}Enter phone number target {Gr}Ex [+6281xxxxxxxxx] {Wh}: {Gr}")
-    default_region = "ID"
+    User_phone = input(f"\n {Wh}Enter phone number target {Gr}Ex [+1415xxxxxxx] {Wh}: {Gr}")
+    if not User_phone.startswith('+'):
+        User_phone = '+' + User_phone
     try:
-        parsed_number = phonenumbers.parse(User_phone, default_region)
-        location = geocoder.description_for_number(parsed_number, "id")
+        from phonenumbers import timezone
+        parsed_number = phonenumbers.parse(User_phone, None)
+        location = geocoder.description_for_number(parsed_number, "en")
         jenis_provider = carrier.name_for_number(parsed_number, "en")
+        time_zones = timezone.time_zones_for_number(parsed_number)
         is_valid = phonenumbers.is_valid_number(parsed_number)
         print(f"\n {Wh}========== {Gr}SHOW INFORMATION PHONE NUMBERS {Wh}==========")
         print(f"\n {Wh}Location (Registered) :{Gr} {location}")
         print(f" {Wh}Operator :{Gr} {jenis_provider}")
+        print(f" {Wh}Timezone(s) :{Gr} {', '.join(time_zones)}")
         print(f" {Wh}Valid Number :{Gr} {is_valid}")
         print(f"\n{Ye}[NOTE] This shows carrier registration info, NOT real-time GPS location.")
         print(f"[NOTE] Real-time phone tracking requires spyware or legal warrants.{Reset}")
     except Exception as e:
-        print(f"{Re}Error: {e}")
+        print(f"{Re}Error: Invalid phone number format or could not parse. Make sure to include the country code.{Reset}")
 
 @is_option
 def TrackLu():
     username = input(f"\n {Wh}Enter Username : {Gr}")
     print(f"\n {Wh}========== {Gr}SHOW INFORMATION USERNAME {Wh}==========")
-    print(f"{Ye}Checking social media presence...{Reset}")
-    print("Functionality preserved from original script.")
+    print(f"{Ye}Checking social media presence for '{username}'...{Reset}\n")
+    
+    platforms = {
+        "Instagram": f"https://www.instagram.com/{username}/",
+        "Facebook": f"https://www.facebook.com/{username}",
+        "Twitter/X": f"https://twitter.com/{username}",
+        "GitHub": f"https://github.com/{username}",
+        "Reddit": f"https://www.reddit.com/user/{username}",
+        "TikTok": f"https://www.tiktok.com/@{username}",
+        "Pinterest": f"https://www.pinterest.com/{username}/"
+    }
+    
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
+    
+    for platform, url in platforms.items():
+        try:
+            response = requests.get(url, headers=headers, timeout=5)
+            if response.status_code == 200:
+                print(f"{Wh}[{Gr}+{Wh}] {platform}: {Gr}Found! {Wh}({url})")
+            elif response.status_code == 404:
+                print(f"{Wh}[{Re}-{Wh}] {platform}: {Re}Not Found")
+            else:
+                print(f"{Wh}[{Ye}?{Wh}] {platform}: {Ye}Blocked/Captcha (Status {response.status_code})")
+        except requests.exceptions.RequestException:
+            print(f"{Wh}[{Re}!{Wh}] {platform}: {Re}Error connecting")
+    
+    print(f"\n{Ye}[NOTE] Some sites (like Twitter or Instagram) may show False Positives/Negatives due to anti-bot protection.{Reset}")
 
 @is_option
 def showIP():
