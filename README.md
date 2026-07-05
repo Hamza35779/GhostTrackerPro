@@ -150,7 +150,7 @@ The Live GPS Tracker (Option 5) works in two scenarios:
 **A:** Flask is required to run the local web server for the Live GPS Tracker feature. Without it, Option 5 will not work.
 
 **Q:** Is this legal?  
-**A:** Yes, for educational purposes and authorized testing (e.g., testing your own devices, or with written permission). Using it to track someone without consent may be illegal in your country.
+**A:** Yes, for educational purposes and authorized testing (e.g., testing your own devices or with written permission). Using it to track someone without consent may be illegal in your country.
 
 ---
 
@@ -163,14 +163,10 @@ GhostTrackPro/
 ├── README.md             # This file
 └── logs/                 # (Auto-created) Stores captured data
 ```
-
-> **Note:** Unlike other tools, this project does not require a separate `templates/index.html` file. The HTML template for the phishing page is embedded directly within the Python script for ease of use and portability. You do not need to create any extra files.
-
 ---
 
 ## 📜 License
 
 This project is licensed for educational use only. By using this tool, you agree to comply with all local and international laws regarding privacy and data protection.
 
-**Developed by:** HunxByts (Original Concept) & Enhanced for Educational Clarity.  
 **Version:** 2.0 (Pro)
