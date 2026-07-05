@@ -66,12 +66,49 @@
 
 ---
 
-**GhostTrack Pro** is a multi-module OSINT (Open Source Intelligence) and educational tracking tool designed for cybersecurity professionals, penetration testers, and ethical hackers. It combines traditional information gathering — IP geolocation, phone number carrier lookup, username cross-referencing — with a **real-time GPS capture module** that demonstrates how location data can be obtained via social engineering.
+**GhostTrack Pro** is a full-stack OSINT (Open Source Intelligence) reconnaissance and educational tracking platform designed for cybersecurity professionals, penetration testers, digital forensics researchers, and ethical hackers. It integrates five intelligence-gathering modules into a unified toolkit that can be operated via three distinct interfaces — terminal, local web browser, or globally deployed cloud instance.
 
-All features are available through three interfaces:
-- **Terminal CLI** — interactive menu or direct command-line flags
-- **Local Web UI** — dark-themed browser interface (Flask, port 8080)
-- **Cloud Web UI** — deploy to Vercel for global access
+### What It Does
+
+GhostTrack Pro collects publicly available information from multiple sources to paint a picture of a target's digital footprint:
+
+| Module | Data Collected | Source |
+|---|---|---|
+| **IP Address Intelligence** | Geolocation, ISP, organization, coordinates | ipwho.is API |
+| **Phone Number Analysis** | Carrier, registered region, timezone, validity | Google libphonenumber |
+| **Username OSINT** | Cross-platform social media presence | Direct HTTP checks (7 platforms) |
+| **Live GPS Capture** | Real-time latitude/longitude, accuracy, IP | Browser Geolocation API via social engineering |
+| **My IP** | Your own public IP, ISP, city, country | ipify.org + ipwho.is |
+
+### Why Use It
+
+- **All-in-one** — No need to juggle separate tools for IP, phone, username, and GPS tracking
+- **Three interfaces** — Use the terminal, a local web UI, or deploy to the cloud
+- **Auto-logging** — Every result is timestamped and saved to `logs/` automatically
+- **Extensible architecture** — `core.py` contains all logic; adding new data sources is straightforward
+- **Educational** — Demonstrates how easily location data can be phished and how much OSINT data is publicly available
+
+### How to Interact
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                        GhostTrack Pro                            │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────────────┐  ┌──────────────────┐  ┌─────────────┐ │
+│  │  Terminal CLI        │  │  Local Web UI    │  │  Vercel     │ │
+│  │  python3 app.py --ip │  │  :8080           │  │  .vercel.app│ │
+│  │                      │  │                  │  │             │ │
+│  │  • Interactive menu  │  │  • Dark theme    │  │  • Cloud    │ │
+│  │  • CLI flags         │  │  • Card layout   │  │  • Public   │ │
+│  │  • GPS server :5000  │  │  • REST API      │  │  • Serverless│ │
+│  └─────────────────────┘  └──────────────────┘  └─────────────┘ │
+│                                                                  │
+│         All three share the same core.py backend                 │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+All three interfaces share the same backend logic in `core.py`, so results are identical regardless of how you run the tool. The CLI is best for quick lookups in the terminal, the local web UI provides a richer visual experience, and the Vercel deployment makes the toolkit accessible from any device with a browser.
 
 ---
 
