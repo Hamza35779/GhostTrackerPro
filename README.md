@@ -60,8 +60,8 @@
 
 3. **Clone the repository:**
    ```bash
-   git clone https://github.com/akramlatif/GhostTracker.git
-   cd GhostTracker
+   git clone https://github.com/akramlatif/GhostTrackerPro.git
+   cd GhostTrackerPro
    ```
 
 4. **Install dependencies:**
@@ -90,8 +90,8 @@
 
 3. **Clone the repository:**
    ```bash
-   git clone https://github.com/akramlatif/GhostTracker.git
-   cd GhostTracker
+   git clone https://github.com/akramlatif/GhostTrackerPro.git
+   cd GhostTrackerPro
    ```
 
 4. **Install dependencies:**
