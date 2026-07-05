@@ -1,8 +1,42 @@
 <p align="center">
+  <a href="https://ghosttrackerpro.vercel.app">
+    <img src="https://img.shields.io/badge/GhostTrack_Pro-v3.1-00ff88?style=for-the-badge&logo=python&logoColor=white&labelColor=1a1a2e" alt="GhostTrack Pro">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Flask-3.0-000?logo=flask&logoColor=white" alt="Flask">
+  <img src="https://img.shields.io/badge/Vercel-Deployed-000?logo=vercel&logoColor=white" alt="Vercel">
+  <img src="https://img.shields.io/badge/License-Educational%20Only-yellow" alt="License">
+  <img src="https://img.shields.io/github/stars/Hamza35779/GhostTrackerPro?style=social" alt="Stars">
+</p>
+
+<p align="center">
+  <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:#00ff88"/>
+        <stop offset="100%" style="stop-color:#00cc66"/>
+      </linearGradient>
+    </defs>
+    <circle cx="32" cy="32" r="30" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.3"/>
+    <circle cx="32" cy="32" r="20" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.5"/>
+    <circle cx="32" cy="32" r="10" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.7"/>
+    <circle cx="32" cy="32" r="4" fill="#00ff88"/>
+    <line x1="32" y1="32" x2="50" y2="18" stroke="#00ff88" stroke-width="2" opacity="0.8"/>
+    <line x1="32" y1="32" x2="48" y2="42" stroke="#00ff88" stroke-width="2" opacity="0.6"/>
+    <line x1="32" y1="32" x2="20" y2="46" stroke="#00ff88" stroke-width="2" opacity="0.4"/>
+  </svg>
+</p>
+
+<p align="center">
   <img src="images/Home.png" alt="GhostTrack Pro" width="80%">
 </p>
 
-<h1 align="center">GhostTrack Pro</h1>
+<h1 align="center">
+  GhostTrack Pro
+</h1>
 <p align="center">
   <strong>Advanced OSINT & Educational Tracking Toolkit</strong>
   <br>
@@ -10,6 +44,7 @@
 </p>
 
 <p align="center">
+  <br>
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
   <a href="#usage">Usage</a> •
@@ -17,6 +52,16 @@
   <a href="#deploy-to-vercel">Vercel</a> •
   <a href="#api-documentation">API</a> •
   <a href="#architecture">Architecture</a>
+</p>
+
+<p align="center">
+  <sub>
+    <strong>Live Demo:</strong>
+    <a href="https://ghosttrackerpro.vercel.app">ghosttrackerpro.vercel.app</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <strong>Repo:</strong>
+    <a href="https://github.com/Hamza35779/GhostTrackerPro">github.com/Hamza35779/GhostTrackerPro</a>
+  </sub>
 </p>
 
 ---
