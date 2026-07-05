@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostTrackerPro - Web Interface</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <nav>
+    <div class="brand">GhostTrack <span>Pro</span></div>
+    <div class="nav-links">
+      <a href="#" class="active" data-page="home">Home</a>
+      <a href="#" data-page="ip-tracker">IP Tracker</a>
+      <a href="#" data-page="phone-tracker">Phone</a>
+      <a href="#" data-page="username-tracker">Username</a>
+      <a href="#" data-page="my-ip">My IP</a>
+      <a href="#" data-page="gps">GPS</a>
+      <a href="#" data-page="logs">Logs</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- HOME -->
+    <div id="page-home" class="section active">
+      <h1>GhostTrackerPro <small>OSINT & Educational Toolkit</small></h1>
+      <p class="sub">Select a tool below to get started. All results are automatically saved to the logs directory.</p>
+      <div class="cards">
+        <div class="card" onclick="showPage('ip-tracker')">
+          <div class="icon">&#127758;</div>
+          <h3>IP Tracker</h3>
+          <p>Look up registration information for any IP address including country, city, ISP, and coordinates.</p>
+          <span class="badge">Info Only</span>
+        </div>
+        <div class="card" onclick="showPage('my-ip')">
+          <div class="icon">&#128187;</div>
+          <h3>My IP</h3>
+          <p>View your own public IP address along with ISP and location details.</p>
+        </div>
+        <div class="card" onclick="showPage('phone-tracker')">
+          <div class="icon">&#128222;</div>
+          <h3>Phone Tracker</h3>
+          <p>Analyze phone numbers for carrier, location, timezone, and validity information.</p>
+          <span class="badge">Info Only</span>
+        </div>
+        <div class="card" onclick="showPage('username-tracker')">
+          <div class="icon">&#128100;</div>
+          <h3>Username Tracker</h3>
+          <p>Search for a username across Instagram, Facebook, Twitter/X, GitHub, Reddit, TikTok, and Pinterest.</p>
+        </div>
+        <div class="card" onclick="showPage('gps')">
+          <div class="icon">&#128205;</div>
+          <h3>GPS Tracker</h3>
+          <p>Start the live GPS tracking server to demonstrate location data capture via social engineering.</p>
+        </div>
+        <div class="card" onclick="showPage('logs')">
+          <div class="icon">&#128196;</div>
+          <h3>View Logs</h3>
+          <p>Browse all previously saved results from your tracking sessions.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- IP TRACKER -->
+    <div id="page-ip-tracker" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>IP Tracker</h1>
+      <p class="sub">Enter an IP address to look up its registration information.</p>
+      <div class="form-group">
+        <label for="ip-input">IP Address</label>
+        <input type="text" id="ip-input" placeholder="e.g. 8.8.8.8" />
+      </div>
+      <button class="btn btn-primary" onclick="trackIP()" id="ip-btn">Look Up</button>
+      <div id="ip-result"></div>
+    </div>
+
+    <!-- PHONE TRACKER -->
+    <div id="page-phone-tracker" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>Phone Number Tracker</h1>
+      <p class="sub">Enter a phone number with country code to analyze its carrier and registration details.</p>
+      <div class="form-group">
+        <label for="phone-input">Phone Number</label>
+        <input type="text" id="phone-input" placeholder="e.g. +14155552671" />
+      </div>
+      <button class="btn btn-primary" onclick="trackPhone()" id="phone-btn">Look Up</button>
+      <div id="phone-result"></div>
+    </div>
+
+    <!-- USERNAME TRACKER -->
+    <div id="page-username-tracker" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>Username Tracker</h1>
+      <p class="sub">Search for a username across major social media platforms.</p>
+      <div class="form-group">
+        <label for="username-input">Username</label>
+        <input type="text" id="username-input" placeholder="e.g. johndoe" />
+      </div>
+      <button class="btn btn-primary" onclick="trackUsername()" id="username-btn">Search</button>
+      <div id="username-result"></div>
+    </div>
+
+    <!-- MY IP -->
+    <div id="page-my-ip" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>Your Public IP</h1>
+      <p class="sub">View your current public IP address and location details.</p>
+      <button class="btn btn-primary" onclick="showMyIP()" id="myip-btn">Check My IP</button>
+      <div id="myip-result"></div>
+    </div>
+
+    <!-- GPS -->
+    <div id="page-gps" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>Live GPS Tracker</h1>
+      <p class="sub">The GPS tracker creates a local web server to demonstrate location data capture.</p>
+      <div class="alert alert-warning">
+        <strong>&#9888;&#65039; Educational Use Only:</strong> This feature requires the target to click a link and grant location permission. Do not use without consent.
+      </div>
+      <div class="gps-info">
+        <h3>How to Use</h3>
+        <p><strong>1.</strong> Start the server from the terminal:</p>
+        <code>python3 GhostTrackerPro.py --gps</code>
+        <p><strong>2.</strong> Share the generated link with the target (local network or via Ngrok).</p>
+        <p><strong>3.</strong> When they grant location permission, coordinates appear in your terminal and are saved to logs.</p>
+      </div>
+      <div id="gps-result"></div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="page-logs" class="section">
+      <a href="#" class="back-link" onclick="showPage('home')">&larr; Back to Home</a>
+      <h1>Saved Logs</h1>
+      <p class="sub">Browse previously saved tracking results.</p>
+      <button class="btn btn-secondary" onclick="loadLogs()" id="logs-btn">Refresh Logs</button>
+      <div id="logs-result"></div>
+    </div>
+  </div>
+
+  <footer>GhostTrackerPro &mdash; For educational and authorized testing purposes only.</footer>
+
+  <script>
+    function showPage(page) {
+      document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+      const link = document.querySelector('.nav-links a[data-page="' + page + '"]');
+      if (link) link.classList.add('active');
+    }
+
+    function showLoading(containerId, btnId) {
+      document.getElementById(containerId).innerHTML =
+        '<div class="loading"><div class="spinner"></div><p>Processing...</p></div>';
+      if (btnId) document.getElementById(btnId).disabled = true;
+    }
+
+    function hideLoading(containerId, btnId) {
+      if (btnId) document.getElementById(btnId).disabled = false;
+    }
+
+    function displayError(containerId, msg) {
+      document.getElementById(containerId).innerHTML =
+        '<div class="result-card"><h3 style="color:#ff4444;">Error</h3><p>' + msg + '</p></div>';
+    }
+
+    function trackIP() {
+      const ip = document.getElementById('ip-input').value.trim();
+      if (!ip) { displayError('ip-result', 'Please enter an IP address.'); return; }
+      showLoading('ip-result', 'ip-btn');
+      fetch('/api/ip-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ip: ip })
+      })
+      .then(r => r.json())
+      .then(res => {
+        hideLoading('ip-result', 'ip-btn');
+        if (!res.success) { displayError('ip-result', res.error); return; }
+        const d = res.data;
+        document.getElementById('ip-result').innerHTML =
+          '<div class="result-card">' +
+            '<h3>IP Information</h3>' +
+            '<table class="result-table">' +
+              '<tr><td>IP Address</td><td>' + d.ip + '</td></tr>' +
+              '<tr><td>Type</td><td>' + d.type + '</td></tr>' +
+              '<tr><td>Country</td><td>' + d.country + '</td></tr>' +
+              '<tr><td>City</td><td>' + d.city + '</td></tr>' +
+              '<tr><td>Region</td><td>' + d.region + '</td></tr>' +
+              '<tr><td>ISP</td><td>' + d.isp + '</td></tr>' +
+              '<tr><td>Organization</td><td>' + d.organization + '</td></tr>' +
+              '<tr><td>Coordinates</td><td>' + d.latitude + ', ' + d.longitude + '</td></tr>' +
+            '</table>' +
+            '<div class="alert alert-info">Note: This shows registration info, not real-time location.</div>' +
+            (d._saved && d._saved.success ? '<div class="saved-notice">&#10003; Saved to ' + d._saved.path + '</div>' : '') +
+          '</div>';
+      })
+      .catch(e => { hideLoading('ip-result', 'ip-btn'); displayError('ip-result', e.message); });
+    }
+
+    function trackPhone() {
+      const phone = document.getElementById('phone-input').value.trim();
+      if (!phone) { displayError('phone-result', 'Please enter a phone number.'); return; }
+      showLoading('phone-result', 'phone-btn');
+      fetch('/api/phone-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: phone })
+      })
+      .then(r => r.json())
+      .then(res => {
+        hideLoading('phone-result', 'phone-btn');
+        if (!res.success) { displayError('phone-result', res.error); return; }
+        const d = res.data;
+        document.getElementById('phone-result').innerHTML =
+          '<div class="result-card">' +
+            '<h3>Phone Information</h3>' +
+            '<table class="result-table">' +
+              '<tr><td>Phone Number</td><td>' + d.phone + '</td></tr>' +
+              '<tr><td>Country Code</td><td>' + d.country_code + '</td></tr>' +
+              '<tr><td>National Number</td><td>' + d.national_number + '</td></tr>' +
+              '<tr><td>Registered Location</td><td>' + d.location + '</td></tr>' +
+              '<tr><td>Carrier</td><td>' + d.carrier + '</td></tr>' +
+              '<tr><td>Timezone</td><td>' + d.timezone + '</td></tr>' +
+              '<tr><td>Valid Number</td><td><span class="result-badge ' + (d.is_valid ? 'badge-success' : 'badge-danger') + '">' + d.is_valid + '</span></td></tr>' +
+            '</table>' +
+            '<div class="alert alert-info">Note: This shows carrier registration info, not real-time GPS location.</div>' +
+            (d._saved && d._saved.success ? '<div class="saved-notice">&#10003; Saved to ' + d._saved.path + '</div>' : '') +
+          '</div>';
+      })
+      .catch(e => { hideLoading('phone-result', 'phone-btn'); displayError('phone-result', e.message); });
+    }
+
+    function trackUsername() {
+      const username = document.getElementById('username-input').value.trim();
+      if (!username) { displayError('username-result', 'Please enter a username.'); return; }
+      showLoading('username-result', 'username-btn');
+      fetch('/api/username-track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username })
+      })
+      .then(r => r.json())
+      .then(res => {
+        hideLoading('username-result', 'username-btn');
+        if (!res.success) { displayError('username-result', res.error); return; }
+        let html = '<div class="result-card"><h3>Username: ' + res.data.username + '</h3><div class="username-result">';
+        res.data.results.forEach(r => {
+          let badge = '';
+          if (r.status === 'found') badge = '<span class="result-badge badge-success">Found</span>';
+          else if (r.status === 'not_found') badge = '<span class="result-badge badge-danger">Not Found</span>';
+          else if (r.status === 'blocked') badge = '<span class="result-badge badge-warning">Blocked (' + r.code + ')</span>';
+          else badge = '<span class="result-badge badge-warning">Error</span>';
+          html += '<div class="platform-item"><div><div class="platform-name">' + r.platform + '</div><div class="platform-url">' + r.url + '</div></div>' + badge + '</div>';
+        });
+        html += '</div>' +
+          '<div class="alert alert-warning">Note: Some sites may show false results due to anti-bot protection.</div>' +
+          (res.data._saved && res.data._saved.success ? '<div class="saved-notice">&#10003; Saved to ' + res.data._saved.path + '</div>' : '') +
+          '</div>';
+        document.getElementById('username-result').innerHTML = html;
+      })
+      .catch(e => { hideLoading('username-result', 'username-btn'); displayError('username-result', e.message); });
+    }
+
+    function showMyIP() {
+      showLoading('myip-result', 'myip-btn');
+      fetch('/api/my-ip')
+      .then(r => r.json())
+      .then(res => {
+        hideLoading('myip-result', 'myip-btn');
+        if (!res.success) { displayError('myip-result', res.error); return; }
+        const d = res.data;
+        let rows = '<tr><td>IP Address</td><td>' + d.ip + '</td></tr>';
+        if (d.isp) rows += '<tr><td>ISP</td><td>' + d.isp + '</td></tr>';
+        if (d.country) rows += '<tr><td>Country</td><td>' + d.country + '</td></tr>';
+        if (d.city) rows += '<tr><td>City</td><td>' + d.city + '</td></tr>';
+        document.getElementById('myip-result').innerHTML =
+          '<div class="result-card"><h3>Your Public IP</h3><table class="result-table">' + rows + '</table></div>';
+      })
+      .catch(e => { hideLoading('myip-result', 'myip-btn'); displayError('myip-result', e.message); });
+    }
+
+    function loadLogs() {
+      showLoading('logs-result', 'logs-btn');
+      fetch('/api/logs')
+      .then(r => r.json())
+      .then(res => {
+        hideLoading('logs-result', 'logs-btn');
+        if (!res.success) { displayError('logs-result', res.error); return; }
+        if (!res.data.length) {
+          document.getElementById('logs-result').innerHTML =
+            '<div class="empty-state"><div class="icon">&#128196;</div><p>No logs found yet. Run a tracker to see results here.</p></div>';
+          return;
+        }
+        let html = '';
+        res.data.forEach(entry => {
+          html += '<div class="log-entry"><div class="log-header"><span class="log-file">' + entry.filename + '</span></div><div class="log-preview">' + escapeHtml(entry.content) + '</div></div>';
+        });
+        document.getElementById('logs-result').innerHTML = html;
+      })
+      .catch(e => { hideLoading('logs-result', 'logs-btn'); displayError('logs-result', e.message); });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const activeSection = document.querySelector('.section.active');
+        if (!activeSection) return;
+        const id = activeSection.id;
+        if (id === 'page-ip-tracker') trackIP();
+        else if (id === 'page-phone-tracker') trackPhone();
+        else if (id === 'page-username-tracker') trackUsername();
+        else if (id === 'page-my-ip') showMyIP();
+      }
+    });
+  </script>
+</body>
+</html>
