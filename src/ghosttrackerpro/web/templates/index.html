@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GhostTrackerPro - OSINT Toolkit</title>
+  <link rel="icon" href="/static/logo.jpg" type="image/jpeg">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    nav { flex-wrap: wrap; gap: 0.3rem; }
+    nav .nav-links { display: flex; flex-wrap: wrap; gap: 0.2rem; }
+    nav .nav-links a { font-size: 0.78rem; margin-left: 0.6rem; padding: 0.25rem 0.4rem; white-space: nowrap; }
+    nav .brand { font-size: 1.1rem; }
+    .subdomain-list { max-height: 300px; overflow-y: auto; }
+    .subdomain-list li { padding: 0.25rem 0; font-size: 0.85rem; }
+    .hash-found { background: #0a2a1a; border: 1px solid var(--accent); border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.75rem; }
+    .hash-found code { display: block; font-size: 1.1rem; margin-top: 0.3rem; }
+    .port-open { background: #0a2a1a; border: 1px solid var(--accent); border-radius: 8px; padding: 0.5rem 1rem; margin: 0.25rem 0; display: inline-block; margin-right: 0.5rem; font-family: monospace; }
+    .port-closed { opacity: 0.4; }
+    .sec-header-good { color: var(--accent); }
+    .sec-header-missing { color: var(--warning); }
+    .whois-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .whois-item { padding: 0.5rem; background: var(--bg-surface); border-radius: 6px; }
+    .whois-item .label { font-size: 0.75rem; color: var(--text-secondary); }
+    .whois-item .value { font-weight: 600; }
+    .badge-rate-limited { background: var(--warning); color: #000; }
+    .results-summary { display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .stat-box { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; flex: 1; min-width: 100px; }
+    .stat-box .num { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .stat-box .label { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+    pre.raw-headers { background: #0a0a1a; padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.75rem; max-height: 250px; line-height: 1.4; }
+    .toggle-content { display: none; }
+    .toggle-content.show { display: block; }
+    .clickable { cursor: pointer; user-select: none; }
+    .clickable:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="brand">
+      <img src="/static/logo.jpg" alt="Logo" class="nav-logo">
+      GhostTrack <span>Pro</span>
+      <span style="font-size:0.6rem;background:var(--accent);color:#000;padding:0.15rem 0.4rem;border-radius:4px;font-weight:700;letter-spacing:0;margin-left:-0.3rem">v2.0</span>
+    </div>
+    <div class="nav-links">
+      <a href="#" class="active" data-page="home">Home</a>
+      <a href="#" data-page="ip-tracker">IP</a>
+      <a href="#" data-page="phone-tracker">Phone</a>
+      <a href="#" data-page="username-tracker">Username</a>
+      <a href="#" data-page="subdomain">Subdomain</a>
+      <a href="#" data-page="dns">DNS</a>
+      <a href="#" data-page="whois">WHOIS</a>
+      <a href="#" data-page="port-scan">Ports</a>
+      <a href="#" data-page="url-analyze">URL</a>
+      <a href="#" data-page="ssl-check">SSL</a>
+      <a href="#" data-page="hash-lookup">Hash</a>
+      <a href="#" data-page="email-breach">Breach</a>
+      <a href="#" data-page="ip-reputation">Rep</a>
+      <a href="#" data-page="my-ip">My IP</a>
+      <a href="#" data-page="bulk">Bulk</a>
+      <a href="#" data-page="gps">GPS</a>
+      <a href="#" data-page="logs">Logs</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- HOME -->
+    <div id="page-home" class="section active">
+      <div class="banner-container">
+        <img src="/static/banner.jpg" alt="GhostTrackerPro Banner" class="home-banner">
+      </div>
+      <h1>GhostTrackerPro <small>Professional OSINT Toolkit v2.0</small></h1>
+      <p class="sub">Select a module below to begin reconnaissance. All results auto-save to logs.</p>
+      <div class="cards">
+        <div class="card" onclick="showPage('ip-tracker')">
+          <div class="icon">&#127758;</div>
+          <h3>IP Tracker</h3>
+          <p>Geolocation, ISP, organization, and coordinates for any IP address.</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('phone-tracker')">
+          <div class="icon">&#128222;</div>
+          <h3>Phone Tracker</h3>
+          <p>Carrier, location, timezone, and validity analysis for phone numbers.</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('username-tracker')">
+          <div class="icon">&#128100;</div>
+          <h3>Username Tracker</h3>
+          <p>Search 20+ social platforms for a username. Real-time presence check.</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('subdomain')">
+          <div class="icon">&#128279;</div>
+          <h3>Subdomain Enum</h3>
+          <p>Discover subdomains via Certificate Transparency logs (crt.sh).</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('dns')">
+          <div class="icon">&#128220;</div>
+          <h3>DNS Lookup</h3>
+          <p>A, AAAA, MX, NS, TXT, CNAME, SOA records for any domain.</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('whois')">
+          <div class="icon">&#128214;</div>
+          <h3>WHOIS Lookup</h3>
+          <p>Domain registration, expiry, nameservers, and registrant info via RDAP.</p>
+          <span class="badge">Recon</span>
+        </div>
+        <div class="card" onclick="showPage('port-scan')">
+          <div class="icon">&#128421;</div>
+          <h3>Port Scanner</h3>
+          <p>Scan 27 common ports on any host. Threaded for fast results.</p>
+          <span class="badge">Analysis</span>
+        </div>
+        <div class="card" onclick="showPage('url-analyze')">
+          <div class="icon">&#128240;</div>
+          <h3>URL Analyzer</h3>
+          <p>Check redirects, security headers, server info, and content-type.</p>
+          <span class="badge">Analysis</span>
+        </div>
+        <div class="card" onclick="showPage('ssl-check')">
+          <div class="icon">&#128274;</div>
+          <h3>SSL Checker</h3>
+          <p>Validate certificate: issuer, expiry, subject, and fingerprint.</p>
+          <span class="badge">Analysis</span>
+        </div>
+        <div class="card" onclick="showPage('hash-lookup')">
+          <div class="icon">&#128272;</div>
+          <h3>Hash Lookup</h3>
+          <p>Reverse MD5, SHA1, SHA256 hashes via public rainbow tables.</p>
+          <span class="badge">Analysis</span>
+        </div>
+        <div class="card" onclick="showPage('email-breach')">
+          <div class="icon">&#128233;</div>
+          <h3>Email Breach</h3>
+          <p>Check if an email appears in known data breaches (HIBP).</p>
+          <span class="badge">Analysis</span>
+        </div>
+        <div class="card" onclick="showPage('ip-reputation')">
+          <div class="icon">&#128737;</div>
+          <h3>IP Reputation</h3>
+          <p>Detect VPN, proxy, TOR, and threat level for any IP.</p>
+          <span class="badge">Security</span>
+        </div>
+        <div class="card" onclick="showPage('my-ip')">
+          <div class="icon">&#128187;</div>
+          <h3>My IP</h3>
+          <p>View your public IP with ISP, country, and city details.</p>
+          <span class="badge">Utility</span>
+        </div>
+        <div class="card" onclick="showPage('bulk')">
+          <div class="icon">&#128203;</div>
+          <h3>Bulk Lookup</h3>
+          <p>Process multiple IPs or phone numbers at once.</p>
+          <span class="badge">Utility</span>
+        </div>
+        <div class="card" onclick="showPage('gps')">
+          <div class="icon">&#128205;</div>
+          <h3>GPS Tracker</h3>
+          <p>Educational social-engineering GPS capture server.</p>
+          <span class="badge">Advanced</span>
+        </div>
+        <div class="card" onclick="showPage('logs')">
+          <div class="icon">&#128196;</div>
+          <h3>Logs</h3>
+          <p>Browse all saved results from every module.</p>
+          <span class="badge">Utility</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TOOL PAGES ===== -->
+
+    <!-- IP TRACKER -->
+    <div id="page-ip-tracker" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>IP Tracker</h1>
+      <p class="sub">Geolocation, ISP, and organization data for any IPv4 address.</p>
+      <div class="form-group">
+        <label for="ip-input">IP Address</label>
+        <input type="text" id="ip-input" placeholder="e.g. 8.8.8.8" />
+      </div>
+      <button class="btn btn-primary" onclick="trackIP()" id="ip-btn">Look Up</button>
+      <div id="ip-result"></div>
+    </div>
+
+    <!-- PHONE TRACKER -->
+    <div id="page-phone-tracker" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Phone Number Tracker</h1>
+      <p class="sub">Carrier, location, timezone, and validity analysis.</p>
+      <div class="form-group">
+        <label for="phone-input">Phone Number (with country code)</label>
+        <input type="text" id="phone-input" placeholder="e.g. +14155552671" />
+      </div>
+      <button class="btn btn-primary" onclick="trackPhone()" id="phone-btn">Look Up</button>
+      <div id="phone-result"></div>
+    </div>
+
+    <!-- USERNAME TRACKER -->
+    <div id="page-username-tracker" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Username Tracker</h1>
+      <p class="sub">Search for a username across 20+ social media platforms.</p>
+      <div class="form-group">
+        <label for="username-input">Username</label>
+        <input type="text" id="username-input" placeholder="e.g. johndoe" />
+      </div>
+      <button class="btn btn-primary" onclick="trackUsername()" id="username-btn">Search</button>
+      <div id="username-result"></div>
+    </div>
+
+    <!-- SUBDOMAIN ENUMERATION -->
+    <div id="page-subdomain" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Subdomain Enumeration</h1>
+      <p class="sub">Discover subdomains via Certificate Transparency logs (crt.sh).</p>
+      <div class="form-group">
+        <label for="subdomain-input">Domain</label>
+        <input type="text" id="subdomain-input" placeholder="e.g. example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="enumSubdomains()" id="subdomain-btn">Enumerate</button>
+      <div id="subdomain-result"></div>
+    </div>
+
+    <!-- DNS LOOKUP -->
+    <div id="page-dns" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>DNS Lookup</h1>
+      <p class="sub">A, AAAA, MX, NS, TXT, CNAME, SOA records for any domain.</p>
+      <div class="form-group">
+        <label for="dns-input">Domain</label>
+        <input type="text" id="dns-input" placeholder="e.g. example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="dnsLookup()" id="dns-btn">Look Up</button>
+      <div id="dns-result"></div>
+    </div>
+
+    <!-- WHOIS LOOKUP -->
+    <div id="page-whois" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>WHOIS Lookup</h1>
+      <p class="sub">Domain registration details via RDAP.</p>
+      <div class="form-group">
+        <label for="whois-input">Domain</label>
+        <input type="text" id="whois-input" placeholder="e.g. example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="whoisLookup()" id="whois-btn">Look Up</button>
+      <div id="whois-result"></div>
+    </div>
+
+    <!-- PORT SCANNER -->
+    <div id="page-port-scan" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Port Scanner</h1>
+      <p class="sub">Scans 27 common ports on the target host. Threaded for speed.</p>
+      <div class="form-group">
+        <label for="port-input">Hostname or IP</label>
+        <input type="text" id="port-input" placeholder="e.g. scanme.nmap.org" />
+      </div>
+      <button class="btn btn-primary" onclick="portScan()" id="port-btn">Scan</button>
+      <div id="port-result"></div>
+    </div>
+
+    <!-- URL ANALYZER -->
+    <div id="page-url-analyze" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>URL Analyzer</h1>
+      <p class="sub">Security headers, redirect chain, server info, and more.</p>
+      <div class="form-group">
+        <label for="url-input">URL</label>
+        <input type="text" id="url-input" placeholder="https://example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="analyzeURL()" id="url-btn">Analyze</button>
+      <div id="url-result"></div>
+    </div>
+
+    <!-- SSL CHECKER -->
+    <div id="page-ssl-check" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>SSL Certificate Checker</h1>
+      <p class="sub">Validate SSL/TLS certificate for any hostname.</p>
+      <div class="form-group">
+        <label for="ssl-input">Hostname</label>
+        <input type="text" id="ssl-input" placeholder="e.g. google.com" />
+      </div>
+      <button class="btn btn-primary" onclick="sslCheck()" id="ssl-btn">Check</button>
+      <div id="ssl-result"></div>
+    </div>
+
+    <!-- HASH LOOKUP -->
+    <div id="page-hash-lookup" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Hash Lookup</h1>
+      <p class="sub">Reverse MD5, SHA1, or SHA256 hashes via public databases.</p>
+      <div class="form-group">
+        <label for="hash-input">Hash Value</label>
+        <input type="text" id="hash-input" placeholder="e.g. 5d41402abc4b2a76b9719d911017c592" />
+      </div>
+      <div id="hash-info" class="alert alert-info" style="margin-bottom:1rem">Supported: MD5 (32 hex chars), SHA1 (40), SHA256 (64)</div>
+      <button class="btn btn-primary" onclick="hashLookup()" id="hash-btn">Look Up</button>
+      <div id="hash-result"></div>
+    </div>
+
+    <!-- EMAIL BREACH CHECK -->
+    <div id="page-email-breach" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Email Breach Check</h1>
+      <p class="sub">Check if an email address appears in known data breaches (HIBP k-anonymity API).</p>
+      <div class="form-group">
+        <label for="email-input">Email Address</label>
+        <input type="text" id="email-input" placeholder="e.g. user@example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="emailBreach()" id="email-btn">Check</button>
+      <div id="email-result"></div>
+    </div>
+
+    <!-- IP REPUTATION -->
+    <div id="page-ip-reputation" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>IP Reputation</h1>
+      <p class="sub">Detect VPN, proxy, TOR, and threat level for any IP address.</p>
+      <div class="form-group">
+        <label for="rep-input">IP Address</label>
+        <input type="text" id="rep-input" placeholder="e.g. 8.8.8.8" />
+      </div>
+      <button class="btn btn-primary" onclick="ipReputation()" id="rep-btn">Check</button>
+      <div id="rep-result"></div>
+    </div>
+
+    <!-- MY IP -->
+    <div id="page-my-ip" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Your Public IP</h1>
+      <p class="sub">Your current public IP address with location and ISP details.</p>
+      <button class="btn btn-primary" onclick="showMyIP()" id="myip-btn">Check My IP</button>
+      <div id="myip-result"></div>
+    </div>
+
+    <!-- BULK LOOKUP -->
+    <div id="page-bulk" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Bulk Lookup</h1>
+      <p class="sub">Process multiple IPs or phone numbers at once (one per line).</p>
+      <div class="alert alert-info">Enter one value per line. Max 20 at a time.</div>
+      <div class="form-group">
+        <label for="bulk-input">Values (one per line)</label>
+        <textarea id="bulk-input" rows="6" style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:#fff;padding:0.75rem 1rem;font-size:0.9rem;outline:none;resize:vertical;font-family:monospace" placeholder="8.8.8.8&#10;1.1.1.1&#10;+14155552671"></textarea>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="bulkIP()" id="bulk-ip-btn">Look Up IPs</button>
+        <button class="btn btn-secondary" onclick="bulkPhone()" id="bulk-phone-btn">Look Up Phones</button>
+      </div>
+      <div id="bulk-result"></div>
+    </div>
+
+    <!-- GPS -->
+    <div id="page-gps" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Live GPS Tracker</h1>
+      <p class="sub">Educational social-engineering GPS capture demonstration.</p>
+      <div class="alert alert-warning">
+        <strong>&#9888;&#65039; Educational Use Only:</strong> This feature requires the target to click a link and grant location permission. Do not use without consent.
+      </div>
+      <div class="gps-info">
+        <h3>How to Use</h3>
+        <p><strong>1.</strong> Start the server from terminal:</p>
+        <code>python3 GhostTrackerPro.py --gps</code>
+        <p><strong>2.</strong> Share the generated link with the target (local network or via Ngrok).</p>
+        <p><strong>3.</strong> When they grant permission, coordinates appear in terminal and are saved to logs.</p>
+      </div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="page-logs" class="section">
+      <a href="#" class="back-link" data-page="home">&larr; Back to Home</a>
+      <h1>Saved Logs</h1>
+      <p class="sub">Browse all saved results from every module.</p>
+      <button class="btn btn-secondary" onclick="loadLogs()" id="logs-btn">Refresh Logs</button>
+      <div id="logs-result"></div>
+    </div>
+  </div>
+
+  <footer>GhostTrackerPro v2.0 &mdash; Professional OSINT Toolkit &bull; For authorized security testing only.</footer>
+
+  <script>
+    function showPage(page, pushHistory) {
+      if (pushHistory !== false) {
+        history.pushState({ page: page }, '', '/?p=' + page);
+      }
+      document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+      var section = document.getElementById('page-' + page);
+      if (section) section.classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(el => el.classList.remove('active'));
+      var link = document.querySelector('.nav-links a[data-page="' + page + '"]');
+      if (link) link.classList.add('active');
+    }
+
+    window.addEventListener('popstate', function(e) {
+      var page = 'home';
+      if (e.state && e.state.page) {
+        page = e.state.page;
+      } else {
+        var params = new URLSearchParams(window.location.search);
+        page = params.get('p') || 'home';
+      }
+      showPage(page, false);
+    });
+
+    (function initPage() {
+      var params = new URLSearchParams(window.location.search);
+      var page = params.get('p') || 'home';
+      history.replaceState({ page: page }, '', '/?p=' + page);
+      showPage(page, false);
+    })();
+
+    document.querySelector('.nav-links').addEventListener('click', function(e) {
+      var link = e.target.closest('a');
+      if (!link) return;
+      e.preventDefault();
+      var page = link.getAttribute('data-page');
+      if (page) showPage(page);
+    });
+
+    document.querySelector('.container').addEventListener('click', function(e) {
+      var link = e.target.closest('.back-link');
+      if (!link) return;
+      e.preventDefault();
+      var page = link.getAttribute('data-page') || 'home';
+      showPage(page);
+    });
+
+    function showLoading(containerId, btnId) {
+      document.getElementById(containerId).innerHTML =
+        '<div class="loading"><div class="spinner"></div><p>Processing...</p></div>';
+      if (btnId) document.getElementById(btnId).disabled = true;
+    }
+
+    function hideLoading(containerId, btnId) {
+      if (btnId) document.getElementById(btnId).disabled = false;
+    }
+
+    function displayError(containerId, msg) {
+      document.getElementById(containerId).innerHTML =
+        '<div class="result-card"><h3 style="color:#ff4444;">Error</h3><p>' + msg + '</p></div>';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function apiPost(url, body, containerId, btnId, cb) {
+      showLoading(containerId, btnId);
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      })
+      .then(r => r.json())
+      .then(res => {
+        hideLoading(containerId, btnId);
+        if (!res.success) { displayError(containerId, res.error); return; }
+        cb(res.data);
+      })
+      .catch(e => { hideLoading(containerId, btnId); displayError(containerId, e.message); });
+    }
+
+    function apiGet(url, containerId, btnId, cb) {
+      showLoading(containerId, btnId);
+      fetch(url)
+      .then(r => r.json())
+      .then(res => {
+        hideLoading(containerId, btnId);
+        if (!res.success) { displayError(containerId, res.error); return; }
+        cb(res.data);
+      })
+      .catch(e => { hideLoading(containerId, btnId); displayError(containerId, e.message); });
+    }
+
+    function savedNotice(saved) {
+      if (saved && saved.success) {
+        return '<div class="saved-notice">&#10003; Saved to ' + escapeHtml(saved.path) + '</div>';
+      }
+      return '';
+    }
+
+    // ---- IP Tracker ----
+    function trackIP() {
+      const ip = document.getElementById('ip-input').value.trim();
+      if (!ip) { displayError('ip-result', 'Enter an IP address.'); return; }
+      apiPost('/api/ip-track', { ip: ip }, 'ip-result', 'ip-btn', d => {
+        document.getElementById('ip-result').innerHTML =
+          '<div class="result-card"><h3>IP Information</h3><table class="result-table">' +
+            '<tr><td>IP Address</td><td>' + d.flag + ' ' + d.ip + '</td></tr>' +
+            '<tr><td>Type</td><td>' + d.type + '</td></tr>' +
+            '<tr><td>Country</td><td>' + d.country + '</td></tr>' +
+            '<tr><td>Country Code</td><td>' + d.country_code + '</td></tr>' +
+            '<tr><td>City</td><td>' + d.city + '</td></tr>' +
+            '<tr><td>Region</td><td>' + d.region + '</td></tr>' +
+            '<tr><td>ISP</td><td>' + d.isp + '</td></tr>' +
+            '<tr><td>Organization</td><td>' + d.organization + '</td></tr>' +
+            '<tr><td>Coordinates</td><td><a href="https://www.google.com/maps?q=' + d.latitude + ',' + d.longitude + '" target="_blank" style="color:var(--accent)">' + d.latitude + ', ' + d.longitude + '</a></td></tr>' +
+          '</table>' +
+          '<div class="alert alert-info">Shows registration info, not real-time location.</div>' +
+          savedNotice(d._saved) + '</div>';
+      });
+    }
+
+    // ---- Phone ----
+    function trackPhone() {
+      const phone = document.getElementById('phone-input').value.trim();
+      if (!phone) { displayError('phone-result', 'Enter a phone number.'); return; }
+      apiPost('/api/phone-track', { phone: phone }, 'phone-result', 'phone-btn', d => {
+        document.getElementById('phone-result').innerHTML =
+          '<div class="result-card"><h3>Phone Information</h3><table class="result-table">' +
+            '<tr><td>Phone Number</td><td>' + d.phone + '</td></tr>' +
+            '<tr><td>International</td><td>' + d.international + '</td></tr>' +
+            '<tr><td>Country Code</td><td>' + d.country_code + '</td></tr>' +
+            '<tr><td>Country</td><td>' + d.country + '</td></tr>' +
+            '<tr><td>Location</td><td>' + d.location + '</td></tr>' +
+            '<tr><td>Carrier</td><td>' + d.carrier + '</td></tr>' +
+            '<tr><td>Timezone</td><td>' + d.timezone + '</td></tr>' +
+            '<tr><td>Valid</td><td><span class="result-badge ' + (d.is_valid ? 'badge-success' : 'badge-danger') + '">' + d.is_valid + '</span></td></tr>' +
+          '</table>' +
+          '<div class="alert alert-info">Carrier registration info, not real-time GPS.</div>' +
+          savedNotice(d._saved) + '</div>';
+      });
+    }
+
+    // ---- Username ----
+    function trackUsername() {
+      const u = document.getElementById('username-input').value.trim();
+      if (!u) { displayError('username-result', 'Enter a username.'); return; }
+      apiPost('/api/username-track', { username: u }, 'username-result', 'username-btn', d => {
+        let html = '<div class="results-summary">' +
+          '<div class="stat-box"><div class="num">' + d.found + '</div><div class="label">Found</div></div>' +
+          '<div class="stat-box"><div class="num">' + (d.total - d.found) + '</div><div class="label">Not Found</div></div>' +
+          '<div class="stat-box"><div class="num">' + d.total + '</div><div class="label">Searched</div></div>' +
+        '</div>';
+        html += '<div class="result-card"><h3>Username: ' + escapeHtml(d.username) + '</h3><div class="username-result">';
+        d.results.forEach(r => {
+          let badge = '';
+          if (r.status === 'found') badge = '<span class="result-badge badge-success">Found</span>';
+          else if (r.status === 'not_found') badge = '<span class="result-badge badge-danger">Not Found</span>';
+          else if (r.status === 'blocked') badge = '<span class="result-badge badge-warning">Blocked (' + r.code + ')</span>';
+          else if (r.status === 'rate_limited') badge = '<span class="result-badge badge-rate-limited">Rate Limited</span>';
+          else badge = '<span class="result-badge badge-warning">Error</span>';
+          html += '<div class="platform-item"><div><div class="platform-name">' + r.platform + '</div><div class="platform-url">' + r.url + '</div></div>' + badge + '</div>';
+        });
+        html += '</div>' + savedNotice(d._saved) + '</div>';
+        document.getElementById('username-result').innerHTML = html;
+      });
+    }
+
+    // ---- Subdomain ----
+    function enumSubdomains() {
+      const d = document.getElementById('subdomain-input').value.trim();
+      if (!d) { displayError('subdomain-result', 'Enter a domain.'); return; }
+      apiPost('/api/subdomain-enum', { domain: d }, 'subdomain-result', 'subdomain-btn', data => {
+        let html = '<div class="results-summary">' +
+          '<div class="stat-box"><div class="num">' + data.count + '</div><div class="label">Subdomains</div></div>' +
+        '</div>';
+        if (data.error) {
+          html += '<div class="alert alert-warning">Error: ' + escapeHtml(data.error) + '</div>';
+        } else if (data.subdomains.length > 0) {
+          html += '<div class="result-card"><h3>Subdomains for ' + escapeHtml(data.domain) + '</h3><ul class="subdomain-list">';
+          data.subdomains.forEach(s => { html += '<li>&#8226; ' + escapeHtml(s) + '</li>'; });
+          html += '</ul></div>';
+        } else {
+          html += '<div class="empty-state"><div class="icon">&#128269;</div><p>No subdomains found.</p></div>';
+        }
+        html += savedNotice(data._saved);
+        document.getElementById('subdomain-result').innerHTML = html;
+      });
+    }
+
+    // ---- DNS ----
+    function dnsLookup() {
+      const d = document.getElementById('dns-input').value.trim();
+      if (!d) { displayError('dns-result', 'Enter a domain.'); return; }
+      apiPost('/api/dns-lookup', { domain: d }, 'dns-result', 'dns-btn', data => {
+        const rec = data.records;
+        let html = '<div class="result-card"><h3>DNS Records for ' + escapeHtml(data.domain) + '</h3>';
+        ['A','AAAA','MX','NS','TXT','CNAME','SOA'].forEach(type => {
+          const vals = rec[type] || [];
+          html += '<div style="margin-top:0.75rem"><strong style="color:var(--accent)">' + type + '</strong></div>';
+          if (vals.length === 0) {
+            html += '<div style="color:var(--text-secondary);font-size:0.85rem;padding:0.25rem 0">(no records)</div>';
+          } else {
+            vals.forEach(v => { html += '<div style="font-family:monospace;font-size:0.85rem;padding:0.2rem 0">' + escapeHtml(v) + '</div>'; });
+          }
+        });
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('dns-result').innerHTML = html;
+      });
+    }
+
+    // ---- WHOIS ----
+    function whoisLookup() {
+      const d = document.getElementById('whois-input').value.trim();
+      if (!d) { displayError('whois-result', 'Enter a domain.'); return; }
+      apiPost('/api/whois', { domain: d }, 'whois-result', 'whois-btn', data => {
+        const w = data.data;
+        if (data.error) {
+          document.getElementById('whois-result').innerHTML = '<div class="alert alert-warning">' + escapeHtml(data.error) + '</div>';
+          return;
+        }
+        let html = '<div class="result-card"><h3>WHOIS: ' + escapeHtml(w.domain) + '</h3>';
+        html += '<div class="whois-grid">';
+        html += '<div class="whois-item"><div class="label">Domain</div><div class="value">' + escapeHtml(w.domain) + '</div></div>';
+        html += '<div class="whois-item"><div class="label">Registrant</div><div class="value">' + escapeHtml(w.registrant) + '</div></div>';
+        html += '<div class="whois-item"><div class="label">Created</div><div class="value">' + escapeHtml(w.creation_date) + '</div></div>';
+        html += '<div class="whois-item"><div class="label">Expires</div><div class="value">' + escapeHtml(w.expiration_date) + '</div></div>';
+        html += '<div class="whois-item"><div class="label">Last Changed</div><div class="value">' + escapeHtml(w.last_changed) + '</div></div>';
+        html += '<div class="whois-item"><div class="label">DNSSEC</div><div class="value">' + (w.dnssec ? '&#10003; Enabled' : '&#10007; Disabled') + '</div></div>';
+        html += '</div>';
+        if (w.nameservers && w.nameservers.length) {
+          html += '<div style="margin-top:1rem"><strong>Nameservers</strong></div>';
+          w.nameservers.forEach(ns => { html += '<div style="font-family:monospace;font-size:0.85rem;padding:0.2rem 0">' + escapeHtml(ns) + '</div>'; });
+        }
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('whois-result').innerHTML = html;
+      });
+    }
+
+    // ---- Port Scan ----
+    function portScan() {
+      const h = document.getElementById('port-input').value.trim();
+      if (!h) { displayError('port-result', 'Enter a hostname or IP.'); return; }
+      apiPost('/api/port-scan', { host: h }, 'port-result', 'port-btn', data => {
+        let html = '<div class="results-summary">' +
+          '<div class="stat-box"><div class="num">' + data.total_open + '</div><div class="label">Open Ports</div></div>' +
+          '<div class="stat-box"><div class="num">' + data.ports_scanned + '</div><div class="label">Scanned</div></div>' +
+        '</div>';
+        if (data.error) {
+          html += '<div class="alert alert-warning">' + escapeHtml(data.error) + '</div>';
+        } else if (data.open_ports.length > 0) {
+          html += '<div class="result-card"><h3>Open Ports on ' + escapeHtml(data.host) + '</h3>';
+          data.open_ports.forEach(p => {
+            html += '<span class="port-open">' + p.port + '/tcp' + (p.service ? ' (' + p.service + ')' : '') + '</span>';
+          });
+          html += '</div>';
+        } else {
+          html += '<div class="result-card"><h3>No Open Ports Found</h3><p style="color:var(--text-secondary)">All 27 common ports are filtered or closed.</p></div>';
+        }
+        html += savedNotice(data._saved);
+        document.getElementById('port-result').innerHTML = html;
+      });
+    }
+
+    // ---- URL Analyze ----
+    function analyzeURL() {
+      const u = document.getElementById('url-input').value.trim();
+      if (!u) { displayError('url-result', 'Enter a URL.'); return; }
+      apiPost('/api/url-analyze', { url: u }, 'url-result', 'url-btn', data => {
+        let html = '<div class="result-card"><h3>URL Analysis</h3><table class="result-table">';
+        html += '<tr><td>URL</td><td>' + escapeHtml(data.url) + '</td></tr>';
+        html += '<tr><td>Final URL</td><td>' + escapeHtml(data.final_url) + '</td></tr>';
+        html += '<tr><td>Status</td><td><span class="result-badge ' + (data.status_code < 400 ? 'badge-success' : 'badge-danger') + '">' + data.status_code + '</span></td></tr>';
+        html += '<tr><td>Server</td><td>' + escapeHtml(data.server) + '</td></tr>';
+        html += '<tr><td>Content-Type</td><td>' + escapeHtml(data.content_type) + '</td></tr>';
+        html += '<tr><td>Redirects</td><td>' + data.redirect_count + '</td></tr>';
+        html += '</table>';
+
+        // Security headers
+        const sec = data.security_headers || {};
+        const expected = ['Strict-Transport-Security','Content-Security-Policy','X-Content-Type-Options','X-Frame-Options','X-XSS-Protection','Referrer-Policy','Permissions-Policy'];
+        html += '<div style="margin-top:1rem"><h3 style="font-size:0.9rem;color:var(--accent);margin-bottom:0.5rem">Security Headers</h3><table class="result-table">';
+        expected.forEach(h => {
+          const val = sec[h];
+          if (val) html += '<tr><td>' + h + '</td><td class="sec-header-good">&#10003; ' + escapeHtml(val) + '</td></tr>';
+          else html += '<tr><td>' + h + '</td><td class="sec-header-missing">&#10007; Missing</td></tr>';
+        });
+        html += '</table></div>';
+
+        // Raw headers toggle
+        html += '<div style="margin-top:0.75rem"><span class="clickable" onclick="this.nextElementSibling.classList.toggle(\'show\')">&#9654; Show Raw Headers</span><div class="toggle-content"><pre class="raw-headers">';
+        for (const [k,v] of Object.entries(data.headers)) {
+          html += escapeHtml(k + ': ' + v) + '\n';
+        }
+        html += '</pre></div></div>';
+
+        // Redirect chain
+        if (data.redirect_chain && data.redirect_chain.length > 0) {
+          html += '<div style="margin-top:0.75rem"><span class="clickable" onclick="this.nextElementSibling.classList.toggle(\'show\')">&#9654; Redirect Chain (' + data.redirect_chain.length + ' hops)</span><div class="toggle-content">';
+          data.redirect_chain.forEach(r => {
+            html += '<div style="font-family:monospace;font-size:0.8rem;padding:0.2rem 0">' + r.status + ' &rarr; ' + escapeHtml(r.url) + '</div>';
+          });
+          html += '</div></div>';
+        }
+
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('url-result').innerHTML = html;
+      });
+    }
+
+    // ---- SSL ----
+    function sslCheck() {
+      const h = document.getElementById('ssl-input').value.trim();
+      if (!h) { displayError('ssl-result', 'Enter a hostname.'); return; }
+      apiPost('/api/ssl-check', { hostname: h }, 'ssl-result', 'ssl-btn', data => {
+        let html = '<div class="result-card"><h3>SSL Certificate: ' + escapeHtml(data.hostname) + '</h3>';
+        html += '<div style="margin-bottom:0.75rem"><span class="result-badge ' + (data.valid ? 'badge-success' : 'badge-danger') + '">' + (data.valid ? 'Valid' : 'Invalid') + '</span></div>';
+        if (data.error) {
+          html += '<div class="alert alert-warning">' + escapeHtml(data.error) + '</div>';
+        } else {
+          html += '<table class="result-table">';
+          html += '<tr><td>Subject</td><td>' + escapeHtml(JSON.stringify(data.subject)) + '</td></tr>';
+          html += '<tr><td>Issuer</td><td>' + escapeHtml(JSON.stringify(data.issuer)) + '</td></tr>';
+          html += '<tr><td>Issued</td><td>' + escapeHtml(data.issued) + '</td></tr>';
+          html += '<tr><td>Expires</td><td>' + escapeHtml(data.expiry) + '</td></tr>';
+          html += '<tr><td>Version</td><td>' + data.version + '</td></tr>';
+          html += '</table>';
+        }
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('ssl-result').innerHTML = html;
+      });
+    }
+
+    // ---- Hash ----
+    function hashLookup() {
+      const h = document.getElementById('hash-input').value.trim();
+      if (!h) { displayError('hash-result', 'Enter a hash value.'); return; }
+      apiPost('/api/hash-lookup', { hash: h }, 'hash-result', 'hash-btn', data => {
+        let html = '<div class="result-card"><h3>Hash Lookup</h3><table class="result-table">';
+        html += '<tr><td>Hash</td><td style="font-family:monospace;font-size:0.8rem;word-break:break-all">' + escapeHtml(data.hash) + '</td></tr>';
+        html += '<tr><td>Type</td><td>' + (data.type || 'Unknown') + '</td></tr>';
+        html += '<tr><td>Found</td><td><span class="result-badge ' + (data.found ? 'badge-success' : 'badge-warning') + '">' + data.found + '</span></td></tr>';
+        html += '</table>';
+        if (data.found && data.plaintext) {
+          html += '<div class="hash-found"><strong>Decrypted:</strong> <code>' + escapeHtml(data.plaintext) + '</code></div>';
+        }
+        if (data.error) {
+          html += '<div class="alert alert-warning">' + escapeHtml(data.error) + '</div>';
+        }
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('hash-result').innerHTML = html;
+      });
+    }
+
+    // ---- Email Breach ----
+    function emailBreach() {
+      const e = document.getElementById('email-input').value.trim();
+      if (!e) { displayError('email-result', 'Enter an email address.'); return; }
+      apiPost('/api/email-breach', { email: e }, 'email-result', 'email-btn', data => {
+        let html = '<div class="result-card"><h3>Breach Check: ' + escapeHtml(data.email) + '</h3>';
+        if (data.compromised) {
+          html += '<div class="alert alert-warning" style="border-color:#ff4444;color:#ff6666">&#9888;&#65039; Email found in ' + data.breaches.length + ' breach database(s).</div>';
+          data.breaches.forEach(b => {
+            html += '<div class="platform-item"><div><div class="platform-name">' + escapeHtml(b.source) + '</div><div class="platform-url">Appears ' + b.count + ' time(s)</div></div></div>';
+          });
+        } else if (data.error) {
+          html += '<div class="alert alert-warning">Error: ' + escapeHtml(data.error) + '</div>';
+        } else {
+          html += '<div class="alert alert-info">&#10003; No breaches found for this email.</div>';
+        }
+        html += '<div style="margin-top:0.75rem;font-size:0.8rem;color:var(--text-secondary)">Using k-anonymity HIBP API &mdash; full email is never sent.</div>';
+        html += savedNotice(data._saved) + '</div>';
+        document.getElementById('email-result').innerHTML = html;
+      });
+    }
+
+    // ---- IP Reputation ----
+    function ipReputation() {
+      const ip = document.getElementById('rep-input').value.trim();
+      if (!ip) { displayError('rep-result', 'Enter an IP address.'); return; }
+      apiPost('/api/ip-reputation', { ip: ip }, 'rep-result', 'rep-btn', data => {
+        let html = '<div class="result-card"><h3>Reputation: ' + escapeHtml(data.ip) + '</h3><table class="result-table">';
+        html += '<tr><td>VPN</td><td><span class="result-badge ' + (data.is_vpn ? 'badge-warning' : 'badge-success') + '">' + data.is_vpn + '</span></td></tr>';
+        html += '<tr><td>Proxy</td><td><span class="result-badge ' + (data.is_proxy ? 'badge-warning' : 'badge-success') + '">' + data.is_proxy + '</span></td></tr>';
+        html += '<tr><td>TOR</td><td><span class="result-badge ' + (data.is_tor ? 'badge-danger' : 'badge-success') + '">' + data.is_tor + '</span></td></tr>';
+        html += '<tr><td>Threat Level</td><td>' + (data.threat || 'unknown') + '</td></tr>';
+        html += '</table>' + savedNotice(data._saved) + '</div>';
+        document.getElementById('rep-result').innerHTML = html;
+      });
+    }
+
+    // ---- My IP ----
+    function showMyIP() {
+      apiGet('/api/my-ip', 'myip-result', 'myip-btn', d => {
+        let rows = '<tr><td>IP Address</td><td>' + d.ip + '</td></tr>';
+        if (d.isp) rows += '<tr><td>ISP</td><td>' + d.isp + '</td></tr>';
+        if (d.country) rows += '<tr><td>Country</td><td>' + d.country + '</td></tr>';
+        if (d.city) rows += '<tr><td>City</td><td>' + d.city + '</td></tr>';
+        document.getElementById('myip-result').innerHTML =
+          '<div class="result-card"><h3>Your Public IP</h3><table class="result-table">' + rows + '</table></div>';
+      });
+    }
+
+    // ---- Bulk IP ----
+    function bulkIP() {
+      const val = document.getElementById('bulk-input').value.trim();
+      if (!val) { displayError('bulk-result', 'Enter values (one per line).'); return; }
+      const lines = val.split('\n').map(l => l.trim()).filter(l => l).slice(0, 20);
+      apiPost('/api/bulk-ip', { ips: lines }, 'bulk-result', 'bulk-ip-btn', data => {
+        let html = '<div class="result-card"><h3>Bulk IP Results</h3>';
+        data.forEach(d => {
+          const ok = !d.error;
+          html += '<div class="platform-item"><div><div class="platform-name">' + escapeHtml(d.ip || d.phone || '?') + '</div>' +
+            '<div class="platform-url">' + (ok ? escapeHtml(d.country + ', ' + d.isp) : 'Error: ' + escapeHtml(d.error)) + '</div></div>' +
+            '<span class="result-badge ' + (ok ? 'badge-success' : 'badge-danger') + '">' + (ok ? 'OK' : 'ERR') + '</span></div>';
+        });
+        html += '</div>';
+        document.getElementById('bulk-result').innerHTML = html;
+      });
+    }
+
+    // ---- Bulk Phone ----
+    function bulkPhone() {
+      const val = document.getElementById('bulk-input').value.trim();
+      if (!val) { displayError('bulk-result', 'Enter values (one per line).'); return; }
+      const lines = val.split('\n').map(l => l.trim()).filter(l => l).slice(0, 20);
+      apiPost('/api/bulk-phone', { phones: lines }, 'bulk-result', 'bulk-phone-btn', data => {
+        let html = '<div class="result-card"><h3>Bulk Phone Results</h3>';
+        data.forEach(d => {
+          const ok = !d.error;
+          html += '<div class="platform-item"><div><div class="platform-name">' + escapeHtml(d.phone || d.ip || '?') + '</div>' +
+            '<div class="platform-url">' + (ok ? escapeHtml(d.location + ', ' + d.carrier) : 'Error: ' + escapeHtml(d.error)) + '</div></div>' +
+            '<span class="result-badge ' + (ok ? 'badge-success' : 'badge-danger') + '">' + (ok ? 'OK' : 'ERR') + '</span></div>';
+        });
+        html += '</div>';
+        document.getElementById('bulk-result').innerHTML = html;
+      });
+    }
+
+    // ---- Logs ----
+    function loadLogs() {
+      apiGet('/api/logs', 'logs-result', 'logs-btn', data => {
+        if (!data.length) {
+          document.getElementById('logs-result').innerHTML =
+            '<div class="empty-state"><div class="icon">&#128196;</div><p>No logs yet. Run a module to see results here.</p></div>';
+          return;
+        }
+        let html = '';
+        data.forEach(entry => {
+          html += '<div class="log-entry"><div class="log-header"><span class="log-file">' + escapeHtml(entry.filename) + '</span></div>' +
+            '<div class="log-preview">' + escapeHtml(entry.content) + '</div></div>';
+        });
+        document.getElementById('logs-result').innerHTML = html;
+      });
+    }
+
+    // ---- Enter key ----
+    document.addEventListener('keydown', function(e) {
+      if (e.key !== 'Enter') return;
+      const map = {
+        'page-ip-tracker': 'trackIP',
+        'page-phone-tracker': 'trackPhone',
+        'page-username-tracker': 'trackUsername',
+        'page-subdomain': 'enumSubdomains',
+        'page-dns': 'dnsLookup',
+        'page-whois': 'whoisLookup',
+        'page-port-scan': 'portScan',
+        'page-url-analyze': 'analyzeURL',
+        'page-ssl-check': 'sslCheck',
+        'page-hash-lookup': 'hashLookup',
+        'page-email-breach': 'emailBreach',
+        'page-ip-reputation': 'ipReputation',
+        'page-my-ip': 'showMyIP',
+      };
+      const active = document.querySelector('.section.active');
+      if (active && map[active.id]) { window[map[active.id]](); }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ghosttrackerpro"
+version = "2.0.0"
+description = "Professional OSINT Toolkit - IP tracking, phone intelligence, username OSINT, subdomain enumeration, DNS, WHOIS, port scanning, URL analysis, SSL checking, hash lookup, breach detection, and more."
+readme = "README.md"
+license = {text = "Educational Use Only"}
+authors = [
+    {name = "HUNXBYTS", email = "hamza35779@github.com"},
+]
+keywords = [
+    "osint", "tracking", "ip-tracker", "phone-tracker", "username-tracker",
+    "cybersecurity", "reconnaissance", "penetration-testing", "ethical-hacking",
+    "subdomain-enumeration", "dns-lookup", "whois", "port-scanner",
+    "hash-lookup", "breach-check", "security-tools",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Education",
+    "License :: Free for Educational Use",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Internet",
+    "Topic :: Utilities",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.31.0",
+    "phonenumbers>=8.13.0",
+    "flask>=3.0.0",
+]
+
+[project.urls]
+Homepage = "https://ghosttrackerpro.vercel.app"
+Repository = "https://github.com/Hamza35779/GhostTrackerPro"
+Documentation = "https://github.com/Hamza35779/GhostTrackerPro#readme"
+"Bug Tracker" = "https://github.com/Hamza35779/GhostTrackerPro/issues"
+
+[project.scripts]
+ghosttrackerpro = "ghosttrackerpro.cli:main"
+gostrack = "ghosttrackerpro.cli:main"
+gtpro = "ghosttrackerpro.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["ghosttrackerpro*"]
+
+[tool.setuptools.package-data]
+"ghosttrackerpro" = [
+    "web/templates/*.html",
+    "web/static/*.css",
+    "web/static/*.jpg",
+    "web/static/*.jpeg",
+    "web/static/*.png",
+]

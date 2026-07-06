@@ -1,0 +1,1 @@
+"""GhostTrackerPro web interface package."""

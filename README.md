@@ -246,51 +246,58 @@ In CLI flag mode and web mode, saving is automatic. In interactive menu mode, yo
 
 ## Installation
 
+### Quick Install (pip)
+
+The easiest way is to install directly from GitHub:
+
+```bash
+pip install git+https://github.com/Hamza35779/GhostTrackerPro.git
+```
+
+Then run from anywhere:
+
+```bash
+ghosttrackerpro          # Interactive menu
+ghosttrackerpro --myip   # Quick IP lookup
+ghosttrackerpro --web    # Web interface
+python -m ghosttrackerpro       # Same via module
+gostrack --ip 8.8.8.8          # Short alias
+gtpro --phone +14155552671     # Another alias
+```
+
+### Development Install (editable)
+
+Clone and install in editable mode so you can modify the code:
+
+```bash
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
+cd GhostTrackerPro
+pip install -e .
+# Now 'ghosttrackerpro' command is available
+# Changes to src/ghosttrackerpro/* take effect immediately
+```
+
+### Manual (no pip install)
+
+```bash
+git clone https://github.com/Hamza35779/GhostTrackerPro.git
+cd GhostTrackerPro
+pip install -r requirements.txt
+python GhostTrackerPro.py          # CLI
+python3 GhostTrackerPro.py --web   # Web interface
+```
+
 ### Requirements
 
 - **Python 3.8+**
 - **pip** (Python package manager)
-- **Operating System:** Linux (Kali, Ubuntu, Parrot), macOS, or Android (Termux)
-
-### Linux (Kali / Ubuntu / Parrot)
-
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install python3-pip git -y
-git clone https://github.com/Hamza35779/GhostTrackerPro.git
-cd GhostTrackerPro
-pip3 install -r requirements.txt
-python3 GhostTrackerPro.py
-```
-
-### macOS
-
-```bash
-# Install Python if needed: brew install python
-git clone https://github.com/Hamza35779/GhostTrackerPro.git
-cd GhostTrackerPro
-pip3 install -r requirements.txt
-python3 GhostTrackerPro.py
-```
-
-### Termux (Android)
-
-> **Important:** Do not use the Play Store version of Termux — it is outdated. Download from [F-Droid](https://f-droid.org/en/packages/com.termux/) or the [official GitHub](https://github.com/termux/termux-app).
-
-```bash
-pkg update && pkg upgrade
-pkg install python git
-git clone https://github.com/Hamza35779/GhostTrackerPro.git
-cd GhostTrackerPro
-pip install -r requirements.txt
-python GhostTrackerPro.py
-```
+- **Operating System:** Linux (Kali, Ubuntu, Parrot), macOS, Windows, or Android (Termux)
 
 ### Verify Installation
 
 ```bash
-python3 GhostTrackerPro.py --myip
-# Expected output: Your public IP address with ISP and location
+ghosttrackerpro --myip
+# Expected: Your public IP address with ISP and location
 ```
 
 ---
@@ -763,6 +770,37 @@ This project is licensed for **educational use only**. By using this tool, you a
 
 ---
 
+## Package Structure
+
+Since v2.0, GhostTrackerPro is organized as a proper Python package:
+
+```
+src/ghosttrackerpro/          # <-- This is the real source
+├── __init__.py               # Package metadata, public API
+├── __main__.py               # python -m ghosttrackerpro
+├── core.py                   # All OSINT logic
+├── cli.py                    # CLI entry point (imported by ghosttrackerpro command)
+├── app.py                    # Flask web application
+└── web/
+    ├── templates/index.html  # Web UI
+    ├── static/style.css      # Dark theme CSS
+    └── static/*.jpg          # Logo and banner images
+```
+
+Root files (`core.py`, `app.py`, `GhostTrackerPro.py`) are thin re-exports that delegate to `src/ghosttrackerpro/`. This keeps Vercel deployment working while providing a proper Python package for `pip install`.
+
+### File Architecture
+
+```
+├── src/ghosttrackerpro/      # Source of truth (the actual code)
+├── core.py                   # → from ghosttrackerpro.core import *
+├── app.py                    # → from ghosttrackerpro.app import app
+├── GhostTrackerPro.py        # → from ghosttrackerpro.cli import main
+├── web/server.py             # → from app import app (dev server)
+├── pyproject.toml            # Package build metadata
+└── requirements.txt          # Dependencies (kept for Vercel)
+```
+
 ## Building a Standalone Executable (.exe)
 
 GhostTrackerPro can be compiled into a portable `.exe` file for Windows (or Linux/macOS binary) using PyInstaller. No Python installation required on the target PC.
@@ -781,25 +819,29 @@ Output: `dist\GhostTrackerPro.exe`
 
 ```bash
 pip install pyinstaller
-pip install -r requirements.txt
+pip install -e .   # or: pip install -r requirements.txt
 
-# Windows
+# Windows (package path)
+pyinstaller GhostTrackerPro.spec
+
+# or manually:
 pyinstaller --clean --noconfirm --name GhostTrackerPro --onefile ^
-  --add-data "web/static;web/static" --add-data "web/templates;web/templates" ^
-  --hidden-import requests --hidden-import phonenumbers --hidden-import flask ^
-  --hidden-import phonenumbers.carrier --hidden-import phonenumbers.geocoder ^
-  --hidden-import phonenumbers.timezone --hidden-import concurrent.futures ^
-  --exclude-module tkinter --exclude-module test --exclude-module unittest ^
+  --add-data "src/ghosttrackerpro/web/static;ghosttrackerpro/web/static" ^
+  --add-data "src/ghosttrackerpro/web/templates;ghosttrackerpro/web/templates" ^
+  --paths src ^
+  --hidden-import ghosttrackerpro --hidden-import ghosttrackerpro.core ^
+  --hidden-import ghosttrackerpro.cli --hidden-import ghosttrackerpro.app ^
   --icon images\\Logo.jpg GhostTrackerPro.py
 
 # Linux/macOS
 pyinstaller --clean --noconfirm --name GhostTrackerPro --onefile \
-  --add-data "web/static:web/static" --add-data "web/templates:web/templates" \
-  --hidden-import requests --hidden-import phonenumbers --hidden-import flask \
-  --hidden-import phonenumbers.carrier --hidden-import phonenumbers.geocoder \
-  --hidden-import phonenumbers.timezone --hidden-import concurrent.futures \
-  --exclude-module tkinter --exclude-module test --exclude-module unittest \
+  --add-data "src/ghosttrackerpro/web/static:ghosttrackerpro/web/static" \
+  --add-data "src/ghosttrackerpro/web/templates:ghosttrackerpro/web/templates" \
+  --paths src \
+  --hidden-import ghosttrackerpro --hidden-import ghosttrackerpro.core \
+  --hidden-import ghosttrackerpro.cli --hidden-import ghosttrackerpro.app \
   GhostTrackerPro.py
+```
 ```
 
 ### Automated Builds (GitHub Actions)
