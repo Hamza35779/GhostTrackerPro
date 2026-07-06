@@ -11,7 +11,10 @@ import subprocess
 import concurrent.futures
 from urllib.parse import urlparse
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    BASE_DIR = os.path.dirname(os.path.abspath(sys.executable))
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 if os.environ.get('VERCEL'):
     LOGS_DIR = '/tmp/logs'

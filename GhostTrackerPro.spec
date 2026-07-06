@@ -9,7 +9,7 @@ import sys
 
 block_cipher = None
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_DIR = os.getcwd()
 SRC_DIR = os.path.join(PROJECT_DIR, 'src')
 PKG_DIR = os.path.join(SRC_DIR, 'ghosttrackerpro')
 STATIC_DIR = os.path.join(PKG_DIR, 'web', 'static')

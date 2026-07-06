@@ -11,7 +11,10 @@ from ghosttrackerpro.core import (
     ssl_check, ip_reputation, bulk_ip_lookup, bulk_phone_lookup,
 )
 
-WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')
+if getattr(sys, 'frozen', False):
+    WEB_DIR = os.path.join(sys._MEIPASS, 'ghosttrackerpro', 'web')
+else:
+    WEB_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'web')
 
 app = Flask(__name__, template_folder=os.path.join(WEB_DIR, 'templates'), static_folder=None)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', os.urandom(24).hex())
