@@ -1,15 +1,15 @@
 :root {
-  --bg-primary: #0f0f1a;
-  --bg-surface: #1a1a2e;
-  --bg-input: #12122a;
-  --bg-card: #12122a;
-  --border: #2a2a4a;
-  --accent: #00c0c0;
-  --accent-glow: rgba(0, 192, 192, 0.15);
-  --text-primary: #e0e0e0;
-  --text-secondary: #888;
-  --text-muted: #555;
-  --text-nav: #aaa;
+  --bg-primary: #101520;
+  --bg-surface: #1c1c2e;
+  --bg-input: #151528;
+  --bg-card: #151528;
+  --border: #282845;
+  --accent: #00b0b0;
+  --accent-glow: rgba(0, 176, 176, 0.12);
+  --text-primary: #f0f0f0;
+  --text-secondary: #a8c0c0;
+  --text-muted: #556;
+  --text-nav: #b0c8c8;
   --danger: #ff4444;
   --warning: #ffaa00;
   --info: #4488ff;
@@ -417,7 +417,7 @@ input[type="text"]:focus {
 
 .gps-info code {
   display: block;
-  background: #0a0a1a;
+  background: #0a0a18;
   padding: 0.75rem 1rem;
   border-radius: 6px;
   margin: 0.75rem 0;
