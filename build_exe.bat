@@ -33,23 +33,7 @@ if exist build rmdir /s /q build
 :: Build executable
 echo.
 echo [*] Building GhostTrackerPro.exe...
-python -m PyInstaller --clean --noconfirm ^
-    --name GhostTrackerPro ^
-    --onefile ^
-    --add-data "web/static;web/static" ^
-    --add-data "web/templates;web/templates" ^
-    --hidden-import requests ^
-    --hidden-import phonenumbers ^
-    --hidden-import phonenumbers.carrier ^
-    --hidden-import phonenumbers.geocoder ^
-    --hidden-import phonenumbers.timezone ^
-    --hidden-import flask ^
-    --hidden-import concurrent.futures ^
-    --exclude-module tkinter ^
-    --exclude-module test ^
-    --exclude-module unittest ^
-    --icon images\Logo.jpg ^
-    GhostTrackerPro.py
+python -m PyInstaller GhostTrackerPro.spec
 
 if %errorlevel% equ 0 (
     echo.
