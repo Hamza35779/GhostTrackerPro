@@ -760,3 +760,67 @@ GhostTrackPro/
 This project is licensed for **educational use only**. By using this tool, you agree to comply with all applicable local and international laws regarding privacy, data protection, and computer misuse.
 
 **Version:** 2.0 · Professional OSINT Edition
+
+---
+
+## Building a Standalone Executable (.exe)
+
+GhostTrackerPro can be compiled into a portable `.exe` file for Windows (or Linux/macOS binary) using PyInstaller. No Python installation required on the target PC.
+
+### Windows (One-Click)
+
+Double-click `build_exe.bat` or run in terminal:
+
+```batch
+build_exe.bat
+```
+
+Output: `dist\GhostTrackerPro.exe`
+
+### Any OS (Manual)
+
+```bash
+pip install pyinstaller
+pip install -r requirements.txt
+
+# Windows
+pyinstaller --clean --noconfirm --name GhostTrackerPro --onefile ^
+  --add-data "web/static;web/static" --add-data "web/templates;web/templates" ^
+  --hidden-import requests --hidden-import phonenumbers --hidden-import flask ^
+  --hidden-import phonenumbers.carrier --hidden-import phonenumbers.geocoder ^
+  --hidden-import phonenumbers.timezone --hidden-import concurrent.futures ^
+  --exclude-module tkinter --exclude-module test --exclude-module unittest ^
+  --icon images\\Logo.jpg GhostTrackerPro.py
+
+# Linux/macOS
+pyinstaller --clean --noconfirm --name GhostTrackerPro --onefile \
+  --add-data "web/static:web/static" --add-data "web/templates:web/templates" \
+  --hidden-import requests --hidden-import phonenumbers --hidden-import flask \
+  --hidden-import phonenumbers.carrier --hidden-import phonenumbers.geocoder \
+  --hidden-import phonenumbers.timezone --hidden-import concurrent.futures \
+  --exclude-module tkinter --exclude-module test --exclude-module unittest \
+  GhostTrackerPro.py
+```
+
+### Automated Builds (GitHub Actions)
+
+Every git tag pushed as `v*` triggers an automated build via [.github/workflows/build.yml](.github/workflows/build.yml), producing executables for:
+
+| Platform | File |
+|---|---|
+| Windows | `GhostTrackerPro_Windows.exe` |
+| Linux | `GhostTrackerPro_Linux` |
+| macOS | `GhostTrackerPro_macOS` |
+
+Artifacts are attached to the GitHub Release automatically.
+
+### File Structure After Build
+
+```
+dist/
+├── GhostTrackerPro.exe    # Standalone executable (Windows ~40 MB)
+├── GhostTrackerPro        # Linux binary
+└── GhostTrackerPro_macOS  # macOS binary
+```
+
+The executable bundles everything — Python interpreter, all libraries, web templates, and static files. Users just run the `.exe` and the interactive menu or web interface starts immediately. The `logs/` folder is created automatically on first use.
