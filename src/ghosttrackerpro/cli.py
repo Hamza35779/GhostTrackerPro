@@ -5,6 +5,8 @@ import os
 import sys
 import argparse
 
+from ghosttrackerpro import __version__
+
 from ghosttrackerpro.core import (
     track_ip, track_phone, track_username, get_my_ip,
     get_local_ip, save_result, ensure_logs_dir,
@@ -598,6 +600,7 @@ Examples:
     p.add_argument('--myip', action='store_true', help='Show your public IP')
     p.add_argument('--gps', action='store_true', help='Start GPS tracker server')
     p.add_argument('--web', action='store_true', help='Start web interface')
+    p.add_argument('--version', action='version', version=f'GhostTrackerPro v{__version__}')
     return p
 
 
