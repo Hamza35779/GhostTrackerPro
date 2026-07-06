@@ -16,9 +16,6 @@
   <img src="images/Logo.jpg" alt="GhostTrack Pro Logo" width="120" style="border-radius: 16px;">
 </p>
 
-<p align="center">
-  <img src="images/Banner.jpg" alt="GhostTrack Pro Banner" width="100%">
-</p>
 
 <h1 align="center">
   GhostTrack Pro
@@ -73,6 +70,10 @@ GhostTrack Pro collects publicly available information from multiple sources to 
 - **Auto-logging** — Every result is timestamped and saved to `logs/` automatically
 - **Extensible architecture** — `core.py` contains all logic; adding new data sources is straightforward
 - **Educational** — Demonstrates how easily location data can be phished and how much OSINT data is publicly available
+
+<p align="center">
+  <img src="images/Banner.jpg" alt="GhostTrack Pro Banner" width="100%">
+</p>
 
 ### How to Interact
 
