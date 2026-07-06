@@ -3,7 +3,10 @@ GhostTrackerPro - Flask Web Application
 Thin re-export from the ghosttrackerpro package.
 """
 import os, sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+except NameError:
+    pass
 
 from ghosttrackerpro.app import app
 

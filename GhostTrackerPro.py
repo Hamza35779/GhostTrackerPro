@@ -7,7 +7,10 @@ Standalone CLI entry point. Delegates to the ghosttrackerpro package.
 import sys
 import os
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+except NameError:
+    pass
 
 from ghosttrackerpro.cli import main
 
