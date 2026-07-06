@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://ghosttrackerpro.vercel.app">
-    <img src="https://img.shields.io/badge/GhostTrack_Pro-v3.1-00ff88?style=for-the-badge&logo=python&logoColor=white&labelColor=1a1a2e" alt="GhostTrack Pro">
+    <img src="https://img.shields.io/badge/GhostTrack_Pro-v2.0-00c0c0?style=for-the-badge&logo=python&logoColor=white&labelColor=1a1a2e" alt="GhostTrack Pro">
   </a>
 </p>
 
@@ -23,7 +23,7 @@
 <p align="center">
   <strong>Advanced OSINT & Educational Tracking Toolkit</strong>
   <br>
-  <sub>IP Tracking · Phone Intelligence · Username OSINT · Live GPS Capture · Web Interface</sub>
+  <sub>IP Tracking · Phone Intel · Username OSINT · Subdomain Enum · DNS · WHOIS · Port Scan · URL/Header Analysis · SSL Check · Hash Lookup · Breach Check · Bulk Ops · GPS Capture</sub>
 </p>
 
 <p align="center">
@@ -57,15 +57,25 @@ GhostTrack Pro collects publicly available information from multiple sources to 
 
 | Module | Data Collected | Source |
 |---|---|---|
-| **IP Address Intelligence** | Geolocation, ISP, organization, coordinates | ipwho.is API |
-| **Phone Number Analysis** | Carrier, registered region, timezone, validity | Google libphonenumber |
-| **Username OSINT** | Cross-platform social media presence | Direct HTTP checks (7 platforms) |
-| **Live GPS Capture** | Real-time latitude/longitude, accuracy, IP | Browser Geolocation API via social engineering |
-| **My IP** | Your own public IP, ISP, city, country | ipify.org + ipwho.is |
+| **IP Address Intelligence** | Geolocation, ISP, org, coordinates, flag, type | ipwho.is API |
+| **Phone Number Analysis** | Carrier, region, timezone, validity, country | Google libphonenumber |
+| **Username OSINT** | Cross-platform presence (20 platforms) | Direct HTTP checks |
+| **Subdomain Enumeration** | Discover subdomains via SSL cert logs | crt.sh Certificate Transparency |
+| **DNS Lookup** | A, AAAA, MX, NS, TXT, CNAME, SOA records | System nslookup + socket |
+| **WHOIS Lookup** | Registrant, created/expiry dates, nameservers, DNSSEC | RDAP (Verisign) |
+| **Port Scanner** | Open TCP ports on 27 common ports | Threaded socket connections |
+| **URL / Header Analyzer** | Security headers, redirect chain, server info, status | HTTP requests |
+| **SSL Certificate Checker** | Subject, issuer, expiry, version, validity | Python ssl module |
+| **Hash Lookup** | Reverse MD5, SHA1, SHA256 | Public rainbow table APIs |
+| **Email Breach Check** | HIBP k-anonymity breach detection | haveibeenpwned.com API |
+| **IP Reputation** | VPN, proxy, TOR detection, threat level | ipwho.is security data |
+| **Bulk Lookup** | Process multiple IPs or phones at once | Batch core lookups |
+| **Live GPS Capture** | Real-time lat/lon, accuracy, IP | Browser Geolocation API |
+| **My IP** | Your public IP, ISP, city, country | ipify.org + ipwho.is |
 
 ### Why Use It
 
-- **All-in-one** — No need to juggle separate tools for IP, phone, username, and GPS tracking
+- **All-in-one** — 15+ modules in a single toolkit covering recon, analysis, security, and utilities
 - **Three interfaces** — Use the terminal, a local web UI, or deploy to the cloud
 - **Auto-logging** — Every result is timestamped and saved to `logs/` automatically
 - **Extensible architecture** — `core.py` contains all logic; adding new data sources is straightforward
@@ -86,8 +96,8 @@ GhostTrack Pro collects publicly available information from multiple sources to 
 │  │  Terminal CLI        │  │  Local Web UI    │  │  Vercel     │ │
 │  │  python3 app.py --ip │  │  :8080           │  │  .vercel.app│ │
 │  │                      │  │                  │  │             │ │
-│  │  • Interactive menu  │  │  • Dark theme    │  │  • Cloud    │ │
-│  │  • CLI flags         │  │  • Card layout   │  │  • Public   │ │
+│  │  • 15 modules        │  │  • 16 tool pages  │  │  • Cloud    │ │
+│  │  • CLI flags (15+)   │  │  • Dark theme    │  │  • Public   │ │
 │  │  • GPS server :5000  │  │  • REST API      │  │  • Serverless│ │
 │  └─────────────────────┘  └──────────────────┘  └─────────────┘ │
 │                                                                  │
@@ -149,7 +159,7 @@ Analyze phone numbers for carrier, region, and validity using the [phonenumbers]
 Check the existence of a username across major social media platforms.
 
 | Platform | URL Pattern |
-|---|---|
+|---|---|---|
 | Instagram | `https://instagram.com/{username}/` |
 | Facebook | `https://facebook.com/{username}` |
 | Twitter / X | `https://twitter.com/{username}` |
@@ -157,6 +167,19 @@ Check the existence of a username across major social media platforms.
 | Reddit | `https://reddit.com/user/{username}` |
 | TikTok | `https://tiktok.com/@{username}` |
 | Pinterest | `https://pinterest.com/{username}/` |
+| LinkedIn | `https://linkedin.com/in/{username}/` |
+| YouTube | `https://youtube.com/@{username}` |
+| Snapchat | `https://snapchat.com/add/{username}` |
+| Telegram | `https://t.me/{username}` |
+| Twitch | `https://twitch.tv/{username}` |
+| Medium | `https://medium.com/@{username}` |
+| Steam | `https://steamcommunity.com/id/{username}` |
+| DeviantArt | `https://deviantart.com/{username}` |
+| Behance | `https://behance.net/{username}` |
+| Keybase | `https://keybase.io/{username}` |
+| Mastodon | `https://mastodon.social/@{username}` |
+| SoundCloud | `https://soundcloud.com/{username}` |
+| Spotify | `https://open.spotify.com/user/{username}` |
 
 Results are categorized as **Found**, **Not Found**, or **Blocked** (rate-limited / captcha). Some platforms may return false positives due to anti-bot measures.
 
@@ -183,14 +206,25 @@ Creates a local Flask web server that hosts a fake "Security Alert" page. When t
 
 ### 5. Web Interface (Browser UI)
 
-A single-page web application with a dark theme, card-based navigation, and real-time API responses:
+A single-page web application with a dark navy/cyan theme, card-based dashboard, and real-time API responses:
 
-- IP Tracker — input form with results table
-- Phone Tracker — carrier and location display
-- Username Tracker — per-platform status badges
+- **Dashboard** — banner + card grid for all 16 modules
+- IP Tracker — geolocation table with flag emoji, map link
+- Phone Tracker — international/national formatting, validity badge
+- Username Tracker — per-platform status badges with counters
+- Subdomain Enum — scrollable subdomain list with count
+- DNS Lookup — A, AAAA, MX, NS, TXT, CNAME, SOA sections
+- WHOIS Lookup — grid layout with registrant, dates, DNSSEC
+- Port Scanner — open port badges with service names
+- URL Analyzer — security header audit, raw headers toggle, redirect chain
+- SSL Checker — subject/issuer/expiry with valid/invalid badge
+- Hash Lookup — type detection, decrypted output display
+- Email Breach — HIBP breach results with count
+- IP Reputation — VPN/proxy/TOR status badges
 - My IP — one-click public IP lookup
+- Bulk Lookup — multi-line input for IPs and phones
 - GPS Tracker — setup instructions
-- Logs Browser — view all saved results
+- Logs Browser — scrollable log entries with preview
 
 ---
 
@@ -270,19 +304,38 @@ python3 GhostTrackerPro.py
 ```
 
 ```
-[ 1 ] IP Tracker (Info Only)
-[ 2 ] Show Your IP
-[ 3 ] Phone Number Tracker (Info Only)
-[ 4 ] Username Tracker
-[ 5 ] Live GPS Tracker
-[ 6 ] Web Interface (Browser UI)
-[ 0 ] Exit
+  ── RECONNAISSANCE ──
+  [ 1] IP Tracker
+  [ 2] Phone Number Tracker
+  [ 3] Username Tracker
+  [ 4] Subdomain Enumeration
+  [ 5] DNS Lookup
+  [ 6] WHOIS Lookup
+
+  ── ANALYSIS ──
+  [ 7] Port Scanner
+  [ 8] URL / Header Analyzer
+  [ 9] SSL Certificate Checker
+  [10] Hash Lookup
+  [11] Email Breach Check
+
+  ── SECURITY ──
+  [12] IP Reputation Check
+  [13] Show My IP
+
+  ── UTILITIES ──
+  [14] Bulk Lookup (IP/Phone)
+  [15] Web Interface
+  [16] Live GPS Tracker
+  [17] View Saved Logs
+
+  [ 0] Exit
 ```
 
 ### Command-Line Flags
 
 ```bash
-# IP lookup (auto-saves result)
+# IP lookup
 python3 GhostTrackerPro.py --ip 8.8.8.8
 
 # Phone lookup
@@ -290,6 +343,33 @@ python3 GhostTrackerPro.py --phone +14155552671
 
 # Username search
 python3 GhostTrackerPro.py --username johndoe
+
+# Subdomain enumeration
+python3 GhostTrackerPro.py --domain example.com --subdomain
+
+# DNS lookup
+python3 GhostTrackerPro.py --domain example.com --dns
+
+# WHOIS lookup
+python3 GhostTrackerPro.py --domain example.com --whois
+
+# Port scan
+python3 GhostTrackerPro.py --host scanme.org --portscan
+
+# URL analysis
+python3 GhostTrackerPro.py --url https://example.com --analyze
+
+# SSL certificate check
+python3 GhostTrackerPro.py --hostname google.com --ssl
+
+# Hash reverse lookup
+python3 GhostTrackerPro.py --hash 5d41402abc4b2a76b9719d911017c592
+
+# Email breach check
+python3 GhostTrackerPro.py --email user@example.com --breach
+
+# IP reputation
+python3 GhostTrackerPro.py --reputation 8.8.8.8
 
 # Your public IP
 python3 GhostTrackerPro.py --myip
@@ -466,6 +546,116 @@ Retrieve up to 50 most recent saved log entries.
 curl https://ghosttrackerpro.vercel.app/api/logs
 ```
 
+### `POST /api/subdomain-enum`
+
+Enumerate subdomains via Certificate Transparency logs.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/subdomain-enum \
+  -H "Content-Type: application/json" \
+  -d '{"domain": "example.com"}'
+```
+
+### `POST /api/dns-lookup`
+
+Fetch DNS records (A, AAAA, MX, NS, TXT, CNAME, SOA).
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/dns-lookup \
+  -H "Content-Type: application/json" \
+  -d '{"domain": "example.com"}'
+```
+
+### `POST /api/whois`
+
+Domain WHOIS lookup via RDAP.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/whois \
+  -H "Content-Type: application/json" \
+  -d '{"domain": "google.com"}'
+```
+
+### `POST /api/port-scan`
+
+Scan 27 common TCP ports on a host.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/port-scan \
+  -H "Content-Type: application/json" \
+  -d '{"host": "scanme.nmap.org"}'
+```
+
+### `POST /api/url-analyze`
+
+Analyze URL for security headers, redirects, server info.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/url-analyze \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://example.com"}'
+```
+
+### `POST /api/ssl-check`
+
+Check SSL/TLS certificate details.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/ssl-check \
+  -H "Content-Type: application/json" \
+  -d '{"hostname": "google.com"}'
+```
+
+### `POST /api/hash-lookup`
+
+Reverse MD5, SHA1, or SHA256 hash lookup.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/hash-lookup \
+  -H "Content-Type: application/json" \
+  -d '{"hash": "5d41402abc4b2a76b9719d911017c592"}'
+```
+
+### `POST /api/email-breach`
+
+Check if an email appears in known data breaches (HIBP k-anonymity).
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/email-breach \
+  -H "Content-Type: application/json" \
+  -d '{"email": "user@example.com"}'
+```
+
+### `POST /api/ip-reputation`
+
+Check if an IP is a VPN, proxy, or TOR exit node.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/ip-reputation \
+  -H "Content-Type: application/json" \
+  -d '{"ip": "8.8.8.8"}'
+```
+
+### `POST /api/bulk-ip`
+
+Look up multiple IPs at once.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/bulk-ip \
+  -H "Content-Type: application/json" \
+  -d '{"ips": ["8.8.8.8", "1.1.1.1"]}'
+```
+
+### `POST /api/bulk-phone`
+
+Look up multiple phone numbers at once.
+
+```bash
+curl -X POST https://ghosttrackerpro.vercel.app/api/bulk-phone \
+  -H "Content-Type: application/json" \
+  -d '{"phones": ["+14155552671", "+441632960317"]}'
+```
+
 ---
 
 ## Architecture
@@ -484,14 +674,18 @@ curl https://ghosttrackerpro.vercel.app/api/logs
 │        ▼               ▼               ▼             │
 │  ┌─────────────────────────────────────────────────┐│
 │  │              core.py (Shared Logic)              ││
-│  │  track_ip · track_phone · track_username         ││
-│  │  get_my_ip · get_local_ip · save_result · read   ││
+│  │  track_ip · track_phone · track_username          ││
+│  │  enumerate_subdomains · dns_lookup · whois_lookup ││
+│  │  port_scan · analyze_url · ssl_check              ││
+│  │  hash_lookup · email_breach_check · ip_reputation ││
+│  │  bulk_*_lookup · save_result · read_logs           ││
 │  └─────────────────────────────────────────────────┘│
 │        │                                             │
 │        ▼                                             │
 │  ┌─────────────────────────────────────────────────┐│
 │  │  External APIs & Libraries                       ││
-│  │  ipwho.is · ipify.org · phonenumbers · requests ││
+│  │  ipwho.is · ipify.org · crt.sh · RDAP · HIBP     ││
+│  │  phonenumbers · requests · ssl · socket          ││
 │  └─────────────────────────────────────────────────┘│
 │                                                      │
 └─────────────────────────────────────────────────────┘
@@ -517,6 +711,8 @@ GhostTrackPro/
 ├── README.md
 │
 ├── images/
+│   ├── Logo.jpg             # Logo image (brand)
+│   ├── Banner.jpg           # Hero banner image
 │   ├── Home.png             # Screenshot of the main interface
 │   └── GPSTracker.jpeg      # Screenshot of the GPS tracker
 │
@@ -563,4 +759,4 @@ GhostTrackPro/
 
 This project is licensed for **educational use only**. By using this tool, you agree to comply with all applicable local and international laws regarding privacy, data protection, and computer misuse.
 
-**Version:** 3.1 · Web Edition
+**Version:** 2.0 · Professional OSINT Edition
